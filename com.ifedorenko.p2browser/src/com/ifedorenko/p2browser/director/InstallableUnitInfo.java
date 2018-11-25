@@ -17,35 +17,28 @@ import java.util.Map;
 
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 
-public class InstallableUnitInfo
-{
+public class InstallableUnitInfo {
     private final IInstallableUnit unit;
 
-    private final Map<IInstallableUnit, InstallableUnitInfo> children =
-        new LinkedHashMap<IInstallableUnit, InstallableUnitInfo>();
+    private final Map<IInstallableUnit, InstallableUnitInfo> children = new LinkedHashMap<IInstallableUnit, InstallableUnitInfo>();
 
-    public InstallableUnitInfo( IInstallableUnit unit )
-    {
+    public InstallableUnitInfo(IInstallableUnit unit) {
         this.unit = unit;
     }
 
-    public IInstallableUnit getInstallableUnit()
-    {
+    public IInstallableUnit getInstallableUnit() {
         return unit;
     }
 
-    public void addChild( InstallableUnitInfo child )
-    {
-        children.put( child.getInstallableUnit(), child );
+    public void addChild(InstallableUnitInfo child) {
+        children.put(child.getInstallableUnit(), child);
     }
 
-    public Collection<InstallableUnitInfo> getChildren()
-    {
+    public Collection<InstallableUnitInfo> getChildren() {
         return children.values();
     }
 
-    public void removeChild( InstallableUnitInfo child )
-    {
-        children.remove( child.getInstallableUnit() );
+    public void removeChild(InstallableUnitInfo child) {
+        children.remove(child.getInstallableUnit());
     }
 }

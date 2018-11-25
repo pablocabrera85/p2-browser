@@ -24,38 +24,30 @@ import com.ifedorenko.p2browser.model.IncludedInstallableUnits;
 /**
  * @see IncludedInstallableUnits
  */
-@SuppressWarnings( "restriction" )
-public class IncludingFeaturesCalculator
-    extends ReferencesCalculator
-{
+@SuppressWarnings("restriction")
+public class IncludingFeaturesCalculator extends ReferencesCalculator {
 
-    public IncludingFeaturesCalculator( IQueryable<IInstallableUnit> units, Collection<IInstallableUnit> roots )
-    {
-        super( units, roots, true );
+    public IncludingFeaturesCalculator(IQueryable<IInstallableUnit> units, Collection<IInstallableUnit> roots) {
+        super(units, roots, true);
     }
 
     @Override
-    protected boolean isInteresting( IInstallableUnit unit )
-    {
-        if ( !super.isInteresting( unit ) )
-        {
+    protected boolean isInteresting(IInstallableUnit unit) {
+        if (!super.isInteresting(unit)) {
             return false;
         }
 
-        return Boolean.parseBoolean( unit.getProperty( InstallableUnitDescription.PROP_TYPE_GROUP ) );
+        return Boolean.parseBoolean(unit.getProperty(InstallableUnitDescription.PROP_TYPE_GROUP));
     };
 
     @Override
-    protected boolean isInteresting( IRequirement requirement )
-    {
-        if ( !super.isInteresting( requirement ) )
-        {
+    protected boolean isInteresting(IRequirement requirement) {
+        if (!super.isInteresting(requirement)) {
             return false;
         }
 
-        if ( requirement instanceof IRequiredCapability )
-        {
-            return IncludedInstallableUnits.isSingleVersion( ( (IRequiredCapability) requirement ).getRange() );
+        if (requirement instanceof IRequiredCapability) {
+            return IncludedInstallableUnits.isSingleVersion(((IRequiredCapability) requirement).getRange());
         }
 
         return false;

@@ -16,65 +16,51 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
-class InstallableUnitLabelProvider
-    implements ILabelProvider
-{
+class InstallableUnitLabelProvider implements ILabelProvider {
     @Override
-    public void removeListener( ILabelProviderListener listener )
-    {
+    public void removeListener(ILabelProviderListener listener) {
     }
 
     @Override
-    public boolean isLabelProperty( Object element, String property )
-    {
+    public boolean isLabelProperty(Object element, String property) {
         return false;
     }
 
     @Override
-    public void dispose()
-    {
+    public void dispose() {
     }
 
     @Override
-    public void addListener( ILabelProviderListener listener )
-    {
+    public void addListener(ILabelProviderListener listener) {
     }
 
     @Override
-    public String getText( Object element )
-    {
-        IInstallableUnit iu = toInstallableUnit( element );
+    public String getText(Object element) {
+        IInstallableUnit iu = toInstallableUnit(element);
 
-        if ( iu != null )
-        {
+        if (iu != null) {
             StringBuilder sb = new StringBuilder();
-            if ( Boolean.parseBoolean( iu.getProperty( IInstallableUnit.PROP_PARTIAL_IU ) ) )
-            {
-                sb.append( "[PARTIAL] " );
+            if (Boolean.parseBoolean(iu.getProperty(IInstallableUnit.PROP_PARTIAL_IU))) {
+                sb.append("[PARTIAL] ");
             }
-            sb.append( iu.getId() ).append( ' ' ).append( iu.getVersion().toString() );
+            sb.append(iu.getId()).append(' ').append(iu.getVersion().toString());
             return sb.toString();
         }
         return element != null ? element.toString() : "<null>";
     }
 
-    protected IInstallableUnit toInstallableUnit( Object element )
-    {
+    protected IInstallableUnit toInstallableUnit(Object element) {
         IInstallableUnit iu = null;
-        if ( element instanceof InstallableUnitNode )
-        {
-            iu = ( (InstallableUnitNode) element ).getInstallableUnit();
-        }
-        else if ( element instanceof IInstallableUnit )
-        {
+        if (element instanceof InstallableUnitNode) {
+            iu = ((InstallableUnitNode) element).getInstallableUnit();
+        } else if (element instanceof IInstallableUnit) {
             iu = (IInstallableUnit) element;
         }
         return iu;
     }
 
     @Override
-    public Image getImage( Object element )
-    {
+    public Image getImage(Object element) {
         return null;
     }
 }

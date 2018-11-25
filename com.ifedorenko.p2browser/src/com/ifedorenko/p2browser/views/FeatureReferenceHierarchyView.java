@@ -19,27 +19,22 @@ import org.eclipse.equinox.p2.query.IQueryable;
 import com.ifedorenko.p2browser.director.IInstallableUnitHierarchyCalculator;
 import com.ifedorenko.p2browser.director.IncludingFeaturesCalculator;
 
-public class FeatureReferenceHierarchyView
-    extends AbstractInstallableUnitHierarchyView
-{
+public class FeatureReferenceHierarchyView extends AbstractInstallableUnitHierarchyView {
     public static final String ID = "com.ifedorenko.p2browser.views.FeatureReferenceHierarchyView"; //$NON-NLS-1$
 
     @Override
-    String getListSectionTitle()
-    {
+    String getListSectionTitle() {
         return "All Including Features";
     }
 
     @Override
-    String getHierarchySectionTitle()
-    {
+    String getHierarchySectionTitle() {
         return "Including Feature Hierarchy";
     }
 
     @Override
-    protected IInstallableUnitHierarchyCalculator getCalculator( IQueryable<IInstallableUnit> units,
-                                                                 Collection<IInstallableUnit> roots )
-    {
-        return new IncludingFeaturesCalculator( units, roots );
+    protected IInstallableUnitHierarchyCalculator getCalculator(IQueryable<IInstallableUnit> units,
+            Collection<IInstallableUnit> roots) {
+        return new IncludingFeaturesCalculator(units, roots);
     }
 }

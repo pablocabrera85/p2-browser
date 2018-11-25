@@ -13,7 +13,6 @@ package com.ifedorenko.p2browser.model.match;
 
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 
-public interface IInstallableUnitMatcher
-{
-    public boolean match( IInstallableUnit unit );
+public interface IInstallableUnitMatcher {
+    public boolean match(IInstallableUnit unit);
 }

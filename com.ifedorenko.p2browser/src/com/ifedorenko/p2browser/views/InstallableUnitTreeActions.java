@@ -58,9 +58,8 @@ import org.eclipse.wb.swt.ResourceManager;
 
 import com.ifedorenko.p2browser.Activator;
 
-@SuppressWarnings( "restriction" )
-abstract class InstallableUnitTreeActions
-{
+@SuppressWarnings("restriction")
+abstract class InstallableUnitTreeActions {
     private final TreeViewer treeViewer;
 
     private Action collapseAll;
@@ -69,18 +68,15 @@ abstract class InstallableUnitTreeActions
 
     private final IViewSite viewSite;
 
-    private IWorkbenchPartSite getSite()
-    {
+    private IWorkbenchPartSite getSite() {
         return viewSite;
     }
 
-    public IViewSite getViewSite()
-    {
+    public IViewSite getViewSite() {
         return viewSite;
     }
 
-    public InstallableUnitTreeActions( IViewSite viewSite, TreeViewer treeViewer )
-    {
+    public InstallableUnitTreeActions(IViewSite viewSite, TreeViewer treeViewer) {
         this.viewSite = viewSite;
         this.treeViewer = treeViewer;
 
@@ -91,140 +87,116 @@ abstract class InstallableUnitTreeActions
         initializeToolBar();
     }
 
-    private void initializeConextMenu()
-    {
+    private void initializeConextMenu() {
         Tree tree = treeViewer.getTree();
-        Menu menu = new Menu( tree );
-        tree.setMenu( menu );
+        Menu menu = new Menu(tree);
+        tree.setMenu(menu);
 
-        MenuItem mntmOpen = new MenuItem( menu, SWT.NONE );
-        mntmOpen.addSelectionListener( new SelectionAdapter()
-        {
+        MenuItem mntmOpen = new MenuItem(menu, SWT.NONE);
+        mntmOpen.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected( SelectionEvent e )
-            {
+            public void widgetSelected(SelectionEvent e) {
                 openInstallableUnit();
             }
-        } );
-        mntmOpen.setText( "Open IU" );
+        });
+        mntmOpen.setText("Open IU");
 
-        MenuItem mntmOpenDependencies = new MenuItem( menu, SWT.NONE );
-        mntmOpenDependencies.addSelectionListener( new SelectionAdapter()
-        {
+        MenuItem mntmOpenDependencies = new MenuItem(menu, SWT.NONE);
+        mntmOpenDependencies.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected( SelectionEvent e )
-            {
-                openHierarchyView( DependencyHierarchyView.ID );
+            public void widgetSelected(SelectionEvent e) {
+                openHierarchyView(DependencyHierarchyView.ID);
             }
-        } );
-        mntmOpenDependencies.setText( "Open Dependencies" );
+        });
+        mntmOpenDependencies.setText("Open Dependencies");
 
-        MenuItem mntmOpenReferences = new MenuItem( menu, SWT.NONE );
-        mntmOpenReferences.addSelectionListener( new SelectionAdapter()
-        {
+        MenuItem mntmOpenReferences = new MenuItem(menu, SWT.NONE);
+        mntmOpenReferences.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected( SelectionEvent e )
-            {
-                openHierarchyView( ReferenceHierarchyView.ID );
+            public void widgetSelected(SelectionEvent e) {
+                openHierarchyView(ReferenceHierarchyView.ID);
             }
-        } );
-        mntmOpenReferences.setText( "Open References" );
+        });
+        mntmOpenReferences.setText("Open References");
 
-        MenuItem mntmOpenFeatures = new MenuItem( menu, SWT.NONE );
-        mntmOpenFeatures.addSelectionListener( new SelectionAdapter()
-        {
+        MenuItem mntmOpenFeatures = new MenuItem(menu, SWT.NONE);
+        mntmOpenFeatures.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected( SelectionEvent e )
-            {
-                openHierarchyView( FeatureReferenceHierarchyView.ID );
+            public void widgetSelected(SelectionEvent e) {
+                openHierarchyView(FeatureReferenceHierarchyView.ID);
             }
-        } );
-        mntmOpenFeatures.setText( "Open Including Features" );
+        });
+        mntmOpenFeatures.setText("Open Including Features");
 
-        new MenuItem( menu, SWT.SEPARATOR );
+        new MenuItem(menu, SWT.SEPARATOR);
 
-        MenuItem mntmCopy = new MenuItem( menu, SWT.NONE );
-        mntmCopy.addSelectionListener( new SelectionAdapter()
-        {
+        MenuItem mntmCopy = new MenuItem(menu, SWT.NONE);
+        mntmCopy.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected( SelectionEvent e )
-            {
+            public void widgetSelected(SelectionEvent e) {
                 copyToClipboard();
             }
-        } );
-        mntmCopy.setText( "Copy" );
+        });
+        mntmCopy.setText("Copy");
 
-        if ( getRepositoryLocations() != null )
-        {
-            MenuItem mntmSaveAs = new MenuItem( menu, SWT.NONE );
-            mntmSaveAs.addSelectionListener( new SelectionAdapter()
-            {
+        if (getRepositoryLocations() != null) {
+            MenuItem mntmSaveAs = new MenuItem(menu, SWT.NONE);
+            mntmSaveAs.addSelectionListener(new SelectionAdapter() {
                 @Override
-                public void widgetSelected( SelectionEvent e )
-                {
+                public void widgetSelected(SelectionEvent e) {
                     saveArtifactAs();
                 }
-            } );
-            mntmSaveAs.setText( "Save As..." );
+            });
+            mntmSaveAs.setText("Save As...");
         }
 
-        new MenuItem( menu, SWT.SEPARATOR );
+        new MenuItem(menu, SWT.SEPARATOR);
 
-        MenuItem mntmExpand = new MenuItem( menu, SWT.NONE );
-        mntmExpand.addSelectionListener( new SelectionAdapter()
-        {
+        MenuItem mntmExpand = new MenuItem(menu, SWT.NONE);
+        mntmExpand.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected( SelectionEvent e )
-            {
+            public void widgetSelected(SelectionEvent e) {
                 expandSelected();
             }
-        } );
-        mntmExpand.setText( "Expand" );
+        });
+        mntmExpand.setText("Expand");
 
-        MenuItem mntmCollapse = new MenuItem( menu, SWT.NONE );
-        mntmCollapse.addSelectionListener( new SelectionAdapter()
-        {
+        MenuItem mntmCollapse = new MenuItem(menu, SWT.NONE);
+        mntmCollapse.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected( SelectionEvent e )
-            {
+            public void widgetSelected(SelectionEvent e) {
                 collapseSelected();
             }
-        } );
-        mntmCollapse.setText( "Collapse" );
+        });
+        mntmCollapse.setText("Collapse");
     }
 
-    private void createActions()
-    {
-        collapseAll = new Action( "Collapse All" )
-        {
+    private void createActions() {
+        collapseAll = new Action("Collapse All") {
             @Override
-            public void run()
-            {
+            public void run() {
                 treeViewer.collapseAll();
             }
         };
-        collapseAll.setImageDescriptor( ResourceManager.getPluginImageDescriptor( "com.ifedorenko.p2browser",
-                                                                                  "icons/collapseall.gif" ) );
+        collapseAll.setImageDescriptor(
+                ResourceManager.getPluginImageDescriptor("com.ifedorenko.p2browser", "icons/collapseall.gif"));
 
-        expandAll = new Action( "Expand All" )
-        {
+        expandAll = new Action("Expand All") {
             @Override
-            public void run()
-            {
-                treeViewer.getTree().setRedraw( false );
+            public void run() {
+                treeViewer.getTree().setRedraw(false);
                 treeViewer.expandAll();
-                treeViewer.getTree().setRedraw( true );
+                treeViewer.getTree().setRedraw(true);
             }
         };
-        expandAll.setImageDescriptor( ResourceManager.getPluginImageDescriptor( "com.ifedorenko.p2browser",
-                                                                                "icons/expandall.gif" ) );
+        expandAll.setImageDescriptor(
+                ResourceManager.getPluginImageDescriptor("com.ifedorenko.p2browser", "icons/expandall.gif"));
     }
 
-    private void initializeToolBar()
-    {
+    private void initializeToolBar() {
         IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
-        tbm.add( expandAll );
-        tbm.add( collapseAll );
+        tbm.add(expandAll);
+        tbm.add(collapseAll);
     }
 
     // private void initializeMenu()
@@ -232,29 +204,22 @@ abstract class InstallableUnitTreeActions
     // IMenuManager manager = getViewSite().getActionBars().getMenuManager();
     // }
 
-    protected void openHierarchyView( String viewId )
-    {
+    protected void openHierarchyView(String viewId) {
         IWorkbenchPage activePage = getSite().getWorkbenchWindow().getActivePage();
 
         Collection<InstallableUnitNode> selection = getSelectedInstallableUnits();
 
         StringBuilder sb = new StringBuilder();
-        for ( InstallableUnitNode node : selection )
-        {
-            sb.append( node.getInstallableUnit().getId() );
+        for (InstallableUnitNode node : selection) {
+            sb.append(node.getInstallableUnit().getId());
         }
 
-        try
-        {
-            AbstractInstallableUnitHierarchyView iusView =
-                (AbstractInstallableUnitHierarchyView) activePage.showView( viewId, sb.toString(),
-                                                                            IWorkbenchPage.VIEW_ACTIVATE
-                                                                                | IWorkbenchPage.VIEW_CREATE );
+        try {
+            AbstractInstallableUnitHierarchyView iusView = (AbstractInstallableUnitHierarchyView) activePage
+                    .showView(viewId, sb.toString(), IWorkbenchPage.VIEW_ACTIVATE | IWorkbenchPage.VIEW_CREATE);
 
-            iusView.setMetadata( getAllInstallableUnits(), InstallableUnitNode.toInstallableUnits( selection ) );
-        }
-        catch ( PartInitException e1 )
-        {
+            iusView.setMetadata(getAllInstallableUnits(), InstallableUnitNode.toInstallableUnits(selection));
+        } catch (PartInitException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
@@ -265,26 +230,21 @@ abstract class InstallableUnitTreeActions
 
     protected abstract Collection<URI> getRepositoryLocations();
 
-    private Collection<InstallableUnitNode> getSelectedInstallableUnits()
-    {
-        return getSelection( InstallableUnitNode.class );
+    private Collection<InstallableUnitNode> getSelectedInstallableUnits() {
+        return getSelection(InstallableUnitNode.class);
     }
 
-    protected <T> Collection<T> getSelection( Class<T> type )
-    {
+    protected <T> Collection<T> getSelection(Class<T> type) {
         ArrayList<T> result = new ArrayList<T>();
 
         ISelection selection = treeViewer.getSelection();
-        if ( selection instanceof IStructuredSelection )
-        {
-            Iterator<?> iterator = ( (IStructuredSelection) selection ).iterator();
-            while ( iterator.hasNext() )
-            {
+        if (selection instanceof IStructuredSelection) {
+            Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
+            while (iterator.hasNext()) {
                 Object element = iterator.next();
 
-                if ( type.isInstance( element ) )
-                {
-                    result.add( type.cast( element ) );
+                if (type.isInstance(element)) {
+                    result.add(type.cast(element));
                 }
             }
         }
@@ -292,200 +252,156 @@ abstract class InstallableUnitTreeActions
         return result;
     }
 
-    protected void openInstallableUnit()
-    {
+    protected void openInstallableUnit() {
         IWorkbenchPage activePage = getSite().getWorkbenchWindow().getActivePage();
 
         Collection<InstallableUnitNode> selection = getSelectedInstallableUnits();
 
-        for ( InstallableUnitNode node : selection )
-        {
-            try
-            {
-                InstallableUnitView iuView =
-                    (InstallableUnitView) activePage.showView( InstallableUnitView.ID,
-                                                               node.getInstallableUnit().getId(),
-                                                               IWorkbenchPage.VIEW_ACTIVATE
-                                                                   | IWorkbenchPage.VIEW_CREATE );
-                iuView.setInstallableUnit( node.getMetadata(), node.getInstallableUnit() );
-            }
-            catch ( PartInitException e1 )
-            {
+        for (InstallableUnitNode node : selection) {
+            try {
+                InstallableUnitView iuView = (InstallableUnitView) activePage.showView(InstallableUnitView.ID,
+                        node.getInstallableUnit().getId(), IWorkbenchPage.VIEW_ACTIVATE | IWorkbenchPage.VIEW_CREATE);
+                iuView.setInstallableUnit(node.getMetadata(), node.getInstallableUnit());
+            } catch (PartInitException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
         }
     }
 
-    protected void copyToClipboard()
-    {
+    protected void copyToClipboard() {
         List<Transfer> dataTypes = new ArrayList<Transfer>();
         List<Object> data = new ArrayList<Object>();
 
-        addToClipboard( dataTypes, data );
+        addToClipboard(dataTypes, data);
 
-        Clipboard clipboard = new Clipboard( getSite().getShell().getDisplay() );
+        Clipboard clipboard = new Clipboard(getSite().getShell().getDisplay());
 
-        clipboard.setContents( data.toArray(), dataTypes.toArray( new Transfer[dataTypes.size()] ) );
+        clipboard.setContents(data.toArray(), dataTypes.toArray(new Transfer[dataTypes.size()]));
 
         clipboard.dispose();
     }
 
-    protected void addToClipboard( List<Transfer> dataTypes, List<Object> data )
-    {
+    protected void addToClipboard(List<Transfer> dataTypes, List<Object> data) {
         Collection<InstallableUnitNode> selection = getSelectedInstallableUnits();
 
-        if ( selection != null && !selection.isEmpty() )
-        {
+        if (selection != null && !selection.isEmpty()) {
             StringBuilder sb = new StringBuilder();
 
-            for ( InstallableUnitNode node : selection )
-            {
-                if ( sb.length() > 0 )
-                {
-                    sb.append( '\n' );
+            for (InstallableUnitNode node : selection) {
+                if (sb.length() > 0) {
+                    sb.append('\n');
                 }
-                sb.append( node.getInstallableUnit().getId() );
-                sb.append( '\t' );
-                sb.append( node.getInstallableUnit().getVersion().toString() );
+                sb.append(node.getInstallableUnit().getId());
+                sb.append('\t');
+                sb.append(node.getInstallableUnit().getVersion().toString());
             }
 
-            dataTypes.add( TextTransfer.getInstance() );
-            data.add( sb.toString() );
+            dataTypes.add(TextTransfer.getInstance());
+            data.add(sb.toString());
         }
     }
 
-    protected void expandSelected()
-    {
+    protected void expandSelected() {
         ISelection selection = treeViewer.getSelection();
-        if ( selection instanceof IStructuredSelection && !selection.isEmpty() )
-        {
-            Iterator<?> iterator = ( (IStructuredSelection) selection ).iterator();
-            while ( iterator.hasNext() )
-            {
+        if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
+            Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
+            while (iterator.hasNext()) {
                 Object element = iterator.next();
-                treeViewer.expandToLevel( element, TreeViewer.ALL_LEVELS );
+                treeViewer.expandToLevel(element, TreeViewer.ALL_LEVELS);
             }
         }
     }
 
-    protected void collapseSelected()
-    {
+    protected void collapseSelected() {
         ISelection selection = treeViewer.getSelection();
-        if ( selection instanceof IStructuredSelection && !selection.isEmpty() )
-        {
-            Iterator<?> iterator = ( (IStructuredSelection) selection ).iterator();
-            while ( iterator.hasNext() )
-            {
+        if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
+            Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
+            while (iterator.hasNext()) {
                 Object element = iterator.next();
-                treeViewer.collapseToLevel( element, TreeViewer.ALL_LEVELS );
+                treeViewer.collapseToLevel(element, TreeViewer.ALL_LEVELS);
             }
         }
     }
 
-    protected void saveArtifactAs()
-    {
+    protected void saveArtifactAs() {
         final Collection<InstallableUnitNode> selection = getSelectedInstallableUnits();
 
-        String directoryPath = new DirectoryDialog( getSite().getShell() ).open();
-        if ( directoryPath == null )
-        {
+        String directoryPath = new DirectoryDialog(getSite().getShell()).open();
+        if (directoryPath == null) {
             return;
         }
 
-        final File directory = new File( directoryPath );
+        final File directory = new File(directoryPath);
         directory.mkdirs();
 
         final IProvisioningAgent agent = Activator.getDefault().getProvisioningAgent();
 
-        Job job = new Job( "Saving artifacts" )
-        {
+        Job job = new Job("Saving artifacts") {
             @Override
-            protected IStatus run( IProgressMonitor monitor )
-            {
-                try
-                {
-                    downloadMetadata( monitor );
+            protected IStatus run(IProgressMonitor monitor) {
+                try {
+                    downloadMetadata(monitor);
 
-                    downloadArtifacts( monitor );
+                    downloadArtifacts(monitor);
 
                     return Status.OK_STATUS;
-                }
-                catch ( ProvisionException e )
-                {
+                } catch (ProvisionException e) {
                     return e.getStatus();
                 }
             }
 
-            protected void downloadMetadata( IProgressMonitor monitor )
-                throws ProvisionException
-            {
-                IMetadataRepositoryManager repoManager =
-                    (IMetadataRepositoryManager) agent.getService( IMetadataRepositoryManager.SERVICE_NAME );
+            protected void downloadMetadata(IProgressMonitor monitor) throws ProvisionException {
+                IMetadataRepositoryManager repoManager = (IMetadataRepositoryManager) agent
+                        .getService(IMetadataRepositoryManager.SERVICE_NAME);
                 IMetadataRepository targetRepository;
-                try
-                {
-                    targetRepository = repoManager.loadRepository( directory.toURI(), monitor );
-                }
-                catch ( ProvisionException e )
-                {
-                    targetRepository =
-                        repoManager.createRepository( directory.toURI(), directory.getName(),
-                                                      IMetadataRepositoryManager.TYPE_SIMPLE_REPOSITORY,
-                                                      new HashMap<String, String>() );
+                try {
+                    targetRepository = repoManager.loadRepository(directory.toURI(), monitor);
+                } catch (ProvisionException e) {
+                    targetRepository = repoManager.createRepository(directory.toURI(), directory.getName(),
+                            IMetadataRepositoryManager.TYPE_SIMPLE_REPOSITORY, new HashMap<String, String>());
                 }
 
                 Collection<IInstallableUnit> units = new ArrayList<IInstallableUnit>();
-                for ( InstallableUnitNode node : selection )
-                {
-                    units.add( node.getInstallableUnit() );
+                for (InstallableUnitNode node : selection) {
+                    units.add(node.getInstallableUnit());
                 }
 
-                targetRepository.addInstallableUnits( units );
+                targetRepository.addInstallableUnits(units);
             }
 
-            protected void downloadArtifacts( IProgressMonitor monitor )
-                throws ProvisionException
-            {
-                IArtifactRepositoryManager repoManager =
-                    (IArtifactRepositoryManager) agent.getService( IArtifactRepositoryManager.SERVICE_NAME );
+            protected void downloadArtifacts(IProgressMonitor monitor) throws ProvisionException {
+                IArtifactRepositoryManager repoManager = (IArtifactRepositoryManager) agent
+                        .getService(IArtifactRepositoryManager.SERVICE_NAME);
 
                 IArtifactRepository targetRepository;
-                try
-                {
-                    targetRepository = repoManager.loadRepository( directory.toURI(), monitor );
-                }
-                catch ( ProvisionException e )
-                {
-                    targetRepository =
-                        repoManager.createRepository( directory.toURI(), directory.getName(),
-                                                      IArtifactRepositoryManager.TYPE_SIMPLE_REPOSITORY,
-                                                      new HashMap<String, String>() );
+                try {
+                    targetRepository = repoManager.loadRepository(directory.toURI(), monitor);
+                } catch (ProvisionException e) {
+                    targetRepository = repoManager.createRepository(directory.toURI(), directory.getName(),
+                            IArtifactRepositoryManager.TYPE_SIMPLE_REPOSITORY, new HashMap<String, String>());
                 }
 
                 // IArtifactRepository targetRepository = repoManager.loadRepository( directory.toURI(), monitor );
-                ProvisioningContext ctx = new ProvisioningContext( agent );
+                ProvisioningContext ctx = new ProvisioningContext(agent);
                 Collection<URI> repos = getRepositoryLocations();
-                if ( repos != null )
-                {
+                if (repos != null) {
                     // ctx.setMetadataRepositories( repos.toArray( new URI[repos.size()] ) );
-                    ctx.setArtifactRepositories( repos.toArray( new URI[repos.size()] ) );
+                    ctx.setArtifactRepositories(repos.toArray(new URI[repos.size()]));
                 }
-                DownloadManager mgr = new DownloadManager( ctx, agent );
+                DownloadManager mgr = new DownloadManager(ctx, agent);
 
-                for ( InstallableUnitNode node : selection )
-                {
-                    for ( IArtifactKey key : node.getInstallableUnit().getArtifacts() )
-                    {
-                        IArtifactRequest request = repoManager.createMirrorRequest( key, targetRepository, null, null );
-                        mgr.add( request );
+                for (InstallableUnitNode node : selection) {
+                    for (IArtifactKey key : node.getInstallableUnit().getArtifacts()) {
+                        IArtifactRequest request = repoManager.createMirrorRequest(key, targetRepository, null, null);
+                        mgr.add(request);
                     }
                 }
 
-                mgr.start( monitor );
+                mgr.start(monitor);
             }
         };
-        job.setUser( true );
+        job.setUser(true);
         job.schedule();
     }
 }

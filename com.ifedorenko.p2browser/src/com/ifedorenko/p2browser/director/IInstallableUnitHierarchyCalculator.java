@@ -16,9 +16,7 @@ import java.util.List;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
-public interface IInstallableUnitHierarchyCalculator
-    extends IRunnableWithProgress
-{
+public interface IInstallableUnitHierarchyCalculator extends IRunnableWithProgress {
     public InstallableUnitDAG getHierarchy();
 
     public List<IInstallableUnit> getList();

@@ -15,19 +15,14 @@ import java.util.Comparator;
 
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 
-class InstallableUnitComparator
-    implements Comparator<IInstallableUnit>
-{
+class InstallableUnitComparator implements Comparator<IInstallableUnit> {
     @Override
-    public int compare( IInstallableUnit u1, IInstallableUnit u2 )
-    {
-        if ( u1 != null && u2 != null )
-        {
-            if ( u1.getId().equalsIgnoreCase( u2.getId() ) )
-            {
-                return u1.getVersion().compareTo( u2.getVersion() );
+    public int compare(IInstallableUnit u1, IInstallableUnit u2) {
+        if (u1 != null && u2 != null) {
+            if (u1.getId().equalsIgnoreCase(u2.getId())) {
+                return u1.getVersion().compareTo(u2.getVersion());
             }
-            return u1.getId().compareToIgnoreCase( u2.getId() );
+            return u1.getId().compareToIgnoreCase(u2.getId());
         }
         throw new IllegalArgumentException();
     }

@@ -25,34 +25,29 @@ import org.eclipse.equinox.p2.query.QueryUtil;
 import com.ifedorenko.p2browser.director.InstallableUnitDAG;
 import com.ifedorenko.p2browser.director.InstallableUnitInfo;
 
-public class UngroupedInstallableUnits
-{
+public class UngroupedInstallableUnits {
 
-    public InstallableUnitDAG toInstallableUnitDAG( Iterator<IInstallableUnit> iter )
-    {
+    public InstallableUnitDAG toInstallableUnitDAG(Iterator<IInstallableUnit> iter) {
         Collection<IInstallableUnit> collection = new ArrayList<IInstallableUnit>();
         Map<IInstallableUnit, InstallableUnitInfo> map = new LinkedHashMap<IInstallableUnit, InstallableUnitInfo>();
 
-        while ( iter.hasNext() )
-        {
+        while (iter.hasNext()) {
             IInstallableUnit unit = iter.next();
-            InstallableUnitInfo info = new InstallableUnitInfo( unit );
-            collection.add( unit );
-            map.put( unit, info );
+            InstallableUnitInfo info = new InstallableUnitInfo(unit);
+            collection.add(unit);
+            map.put(unit, info);
         }
 
-        return new InstallableUnitDAG( toArray( collection ), map );
+        return new InstallableUnitDAG(toArray(collection), map);
     }
 
-    public InstallableUnitDAG toInstallableUnitDAG( IQueryable<IInstallableUnit> queryable, IProgressMonitor monitor )
-    {
-        Iterator<IInstallableUnit> iter = queryable.query( QueryUtil.ALL_UNITS, monitor ).iterator();
-        return toInstallableUnitDAG( iter );
+    public InstallableUnitDAG toInstallableUnitDAG(IQueryable<IInstallableUnit> queryable, IProgressMonitor monitor) {
+        Iterator<IInstallableUnit> iter = queryable.query(QueryUtil.ALL_UNITS, monitor).iterator();
+        return toInstallableUnitDAG(iter);
     }
 
-    private static IInstallableUnit[] toArray( Collection<IInstallableUnit> units )
-    {
-        return units.toArray( new IInstallableUnit[units.size()] );
+    private static IInstallableUnit[] toArray(Collection<IInstallableUnit> units) {
+        return units.toArray(new IInstallableUnit[units.size()]);
     }
 
 }

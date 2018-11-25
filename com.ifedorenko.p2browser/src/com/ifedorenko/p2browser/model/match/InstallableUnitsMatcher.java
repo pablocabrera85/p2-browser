@@ -17,20 +17,16 @@ import java.util.Set;
 
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 
-public class InstallableUnitsMatcher
-    implements IInstallableUnitMatcher
-{
+public class InstallableUnitsMatcher implements IInstallableUnitMatcher {
     private final Set<IInstallableUnit> units;
 
-    public InstallableUnitsMatcher( Collection<IInstallableUnit> units )
-    {
-        this.units = new HashSet<IInstallableUnit>( units );
+    public InstallableUnitsMatcher(Collection<IInstallableUnit> units) {
+        this.units = new HashSet<IInstallableUnit>(units);
     }
 
     @Override
-    public boolean match( IInstallableUnit unit )
-    {
-        return units.contains( unit );
+    public boolean match(IInstallableUnit unit) {
+        return units.contains(unit);
     }
 
 }

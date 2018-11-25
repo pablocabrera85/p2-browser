@@ -11,23 +11,18 @@
 
 package com.ifedorenko.p2browser.model.match;
 
-
-abstract class AbstractPatternMatcher
-    implements IInstallableUnitMatcher
-{
+abstract class AbstractPatternMatcher implements IInstallableUnitMatcher {
 
     private final IMatchStrategy strategy;
 
     private final String pattern;
 
-    protected AbstractPatternMatcher( IMatchStrategy strategy, String pattern )
-    {
+    protected AbstractPatternMatcher(IMatchStrategy strategy, String pattern) {
         this.strategy = strategy;
         this.pattern = pattern;
     }
 
-    protected boolean match( String string )
-    {
-        return strategy.match( string, pattern );
+    protected boolean match(String string) {
+        return strategy.match(string, pattern);
     }
 }

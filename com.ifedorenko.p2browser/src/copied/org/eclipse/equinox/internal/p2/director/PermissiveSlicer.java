@@ -14,16 +14,18 @@ import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.IRequirement;
 import org.eclipse.equinox.p2.query.IQueryable;
 
-@SuppressWarnings( "restriction" )
+@SuppressWarnings("restriction")
 public class PermissiveSlicer extends Slicer {
-    private boolean includeOptionalDependencies; //Cause optional dependencies not be followed as part of the
+    private boolean includeOptionalDependencies; // Cause optional dependencies not be followed as part of the
     private boolean everythingGreedy;
     private boolean considerFilter;
     private boolean considerOnlyStrictDependency;
     private boolean evalFilterTo;
     private boolean onlyFilteredRequirements;
 
-    public PermissiveSlicer(IQueryable<IInstallableUnit> input, Map<String, String> context, boolean includeOptionalDependencies, boolean everythingGreedy, boolean evalFilterTo, boolean considerOnlyStrictDependency, boolean onlyFilteredRequirements) {
+    public PermissiveSlicer(IQueryable<IInstallableUnit> input, Map<String, String> context,
+            boolean includeOptionalDependencies, boolean everythingGreedy, boolean evalFilterTo,
+            boolean considerOnlyStrictDependency, boolean onlyFilteredRequirements) {
         super(input, context, true);
         this.considerFilter = (context != null && context.size() > 1) ? true : false;
         this.includeOptionalDependencies = includeOptionalDependencies;
@@ -42,17 +44,17 @@ public class PermissiveSlicer extends Slicer {
     }
 
     protected boolean isApplicable(IRequirement req) {
-        //Every filter in this method needs to continue except when the filter does not pass
+        // Every filter in this method needs to continue except when the filter does not pass
         if (!includeOptionalDependencies)
             if (req.getMin() == 0)
                 return false;
 
         if (considerOnlyStrictDependency) {
-            if (!RequiredCapability.isVersionStrict(req.getMatches()))
+            if (!RequiredCapability.isStrictVersionRequirement(req.getMatches()))
                 return false;
         }
 
-        //deal with filters
+        // deal with filters
         if (considerFilter) {
             if (onlyFilteredRequirements && req.getFilter() == null) {
                 return false;

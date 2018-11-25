@@ -17,15 +17,12 @@ import org.eclipse.ui.IPerspectiveFactory;
 
 import com.ifedorenko.p2browser.views.MetadataRepositoryView;
 
-public class Perspective
-    implements IPerspectiveFactory
-{
-    public void createInitialLayout( IPageLayout layout )
-    {
-        layout.setEditorAreaVisible( false );
+public class Perspective implements IPerspectiveFactory {
+    public void createInitialLayout(IPageLayout layout) {
+        layout.setEditorAreaVisible(false);
 
         String editorArea = layout.getEditorArea();
-        IFolderLayout left = layout.createFolder( "left", IPageLayout.LEFT, IPageLayout.RATIO_MAX, editorArea );
-        left.addView( MetadataRepositoryView.ID );
+        IFolderLayout left = layout.createFolder("left", IPageLayout.LEFT, IPageLayout.RATIO_MAX, editorArea);
+        left.addView(MetadataRepositoryView.ID);
     }
 }
