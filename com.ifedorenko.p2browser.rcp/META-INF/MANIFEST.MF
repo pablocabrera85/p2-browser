@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Rcp
+Bundle-SymbolicName: com.ifedorenko.p2browser.rcp
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: IFEDORENKO
+Automatic-Module-Name: com.ifedorenko.p2browser.rcp
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
