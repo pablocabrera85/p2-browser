@@ -43,9 +43,6 @@ public class InstallableUnitView extends ViewPart {
 
     private Text xmlText;
 
-    public InstallableUnitView() {
-    }
-
     /**
      * Create contents of the view part.
      * 

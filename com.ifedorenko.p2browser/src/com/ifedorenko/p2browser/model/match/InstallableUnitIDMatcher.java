@@ -14,13 +14,13 @@ package com.ifedorenko.p2browser.model.match;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 
 public class InstallableUnitIDMatcher extends AbstractPatternMatcher implements IInstallableUnitMatcher {
-	public InstallableUnitIDMatcher(IMatchStrategy strategy, String pattern) {
-		super(strategy, pattern);
-	}
+    public InstallableUnitIDMatcher(IMatchStrategy strategy, String pattern) {
+        super(strategy, pattern);
+    }
 
-	@Override
-	public boolean match(IInstallableUnit unit) {
-		return match(unit.getId());
-	}
+    @Override
+    public boolean match(IInstallableUnit unit) {
+        return match(unit.getId());
+    }
 
 }

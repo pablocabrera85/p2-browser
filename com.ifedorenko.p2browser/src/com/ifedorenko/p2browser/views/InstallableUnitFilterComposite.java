@@ -16,7 +16,6 @@ import java.util.EventObject;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -31,11 +30,13 @@ import com.ifedorenko.p2browser.model.match.ProvidedCapabilityMatcher;
 import com.ifedorenko.p2browser.model.match.ProvidedPackageMatcher;
 
 public class InstallableUnitFilterComposite extends Composite {
+
+    @FunctionalInterface
     public static interface IFilterChangeListener extends EventListener {
         public void filterChanged(EventObject event);
     }
 
-    private List<IFilterChangeListener> listeners = new ArrayList<IFilterChangeListener>();
+    private List<IFilterChangeListener> listeners = new ArrayList<>();
 
     private IInstallableUnitMatcher unitMatcher;
 
@@ -48,50 +49,48 @@ public class InstallableUnitFilterComposite extends Composite {
         setLayout(gridLayout);
 
         final Combo filterType = new Combo(this, SWT.READ_ONLY);
-        filterType.setItems(new String[] { "Filter by IU", "Filter by capability", "Filter by package" });
+        filterType.setItems("Filter by IU", "Filter by capability", "Filter by package");
         filterType.setText(filterType.getItem(0));
 
         final Combo matchStrategy = new Combo(this, SWT.READ_ONLY);
-        matchStrategy.setItems(new String[] { "Prefix", "Exact" });
+        matchStrategy.setItems("Prefix", "Exact");
         matchStrategy.setText("Prefix");
 
         final Text filterText = new Text(this, SWT.BORDER | SWT.H_SCROLL | SWT.SEARCH | SWT.CANCEL);
         filterText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-        ModifyListener filterChangeListener = new ModifyListener() {
-            public void modifyText(ModifyEvent e) {
-                String pattern = trim(filterText.getText());
-                if (pattern != null) {
-                    IMatchStrategy strategy;
-                    switch (matchStrategy.getSelectionIndex()) {
-                    case 1:
-                        strategy = IMatchStrategy.EXACT;
-                        break;
-                    case 0:
-                    default:
-                        strategy = IMatchStrategy.PREFIX;
-                        break;
-                    }
+        ModifyListener filterChangeListener = event -> {
+            String pattern = trim(filterText.getText());
+            if (pattern != null) {
+                IMatchStrategy strategy;
+                switch (matchStrategy.getSelectionIndex()) {
+                case 1:
+                    strategy = IMatchStrategy.EXACT;
+                    break;
+                case 0:
+                default:
+                    strategy = IMatchStrategy.PREFIX;
+                    break;
+                }
 
-                    switch (filterType.getSelectionIndex()) {
-                    case 1:
-                        unitMatcher = new ProvidedCapabilityMatcher(strategy, pattern);
-                        break;
-                    case 2:
-                        unitMatcher = new ProvidedPackageMatcher(strategy, pattern);
-                        break;
-                    case 0:
-                    default:
-                        unitMatcher = new InstallableUnitIDMatcher(strategy, pattern);
-                        break;
-                    }
-                } else {
-                    unitMatcher = null;
+                switch (filterType.getSelectionIndex()) {
+                case 1:
+                    unitMatcher = new ProvidedCapabilityMatcher(strategy, pattern);
+                    break;
+                case 2:
+                    unitMatcher = new ProvidedPackageMatcher(strategy, pattern);
+                    break;
+                case 0:
+                default:
+                    unitMatcher = new InstallableUnitIDMatcher(strategy, pattern);
+                    break;
                 }
-                EventObject e2 = new EventObject(InstallableUnitFilterComposite.this);
-                for (IFilterChangeListener listener : listeners) {
-                    listener.filterChanged(e2);
-                }
+            } else {
+                unitMatcher = null;
+            }
+            EventObject e2 = new EventObject(InstallableUnitFilterComposite.this);
+            for (IFilterChangeListener listener : listeners) {
+                listener.filterChanged(e2);
             }
         };
 

@@ -28,8 +28,8 @@ import com.ifedorenko.p2browser.director.InstallableUnitInfo;
 public class UngroupedInstallableUnits {
 
     public InstallableUnitDAG toInstallableUnitDAG(Iterator<IInstallableUnit> iter) {
-        Collection<IInstallableUnit> collection = new ArrayList<IInstallableUnit>();
-        Map<IInstallableUnit, InstallableUnitInfo> map = new LinkedHashMap<IInstallableUnit, InstallableUnitInfo>();
+        Collection<IInstallableUnit> collection = new ArrayList<>();
+        Map<IInstallableUnit, InstallableUnitInfo> map = new LinkedHashMap<>();
 
         while (iter.hasNext()) {
             IInstallableUnit unit = iter.next();

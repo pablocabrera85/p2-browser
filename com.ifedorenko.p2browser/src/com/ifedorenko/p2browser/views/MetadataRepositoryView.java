@@ -389,11 +389,11 @@ public class MetadataRepositoryView extends ViewPart {
         Job job = new Job("Reload repository metadata") {
             @Override
             protected IStatus run(IProgressMonitor monitor) {
-                List<IStatus> errors = new ArrayList<IStatus>();
+                List<IStatus> errors = new ArrayList<>();
                 try {
-                    final Map<URI, IMetadataRepository> allrepositories = new LinkedHashMap<URI, IMetadataRepository>();
+                    final Map<URI, IMetadataRepository> allrepositories = new LinkedHashMap<>();
 
-                    final Map<URI, IGroupedInstallableUnits> repositoryContent = new LinkedHashMap<URI, IGroupedInstallableUnits>();
+                    final Map<URI, IGroupedInstallableUnits> repositoryContent = new LinkedHashMap<>();
 
                     IMetadataRepositoryManager repoMgr = Activator.getRepositoryManager();
 
@@ -495,23 +495,19 @@ public class MetadataRepositoryView extends ViewPart {
     }
 
     private void refreshTreeInDisplayThread() {
-        getSite().getShell().getDisplay().asyncExec(new Runnable() {
-            @Override
-            public void run() {
-                treeViewer.getTree().setRedraw(false);
-                treeViewer.getTree().setItemCount(repositories.size());
-                treeViewer.refresh();
-                if (unitMatcher != null) {
-                    treeViewer.expandAll();
-                }
-                treeViewer.getTree().setRedraw(true);
+        getSite().getShell().getDisplay().asyncExec(() -> {
+            treeViewer.getTree().setRedraw(false);
+            treeViewer.getTree().setItemCount(repositories.size());
+            treeViewer.refresh();
+            if (unitMatcher != null) {
+                treeViewer.expandAll();
             }
+            treeViewer.getTree().setRedraw(true);
         });
     }
 
     private void loadRepository(IMetadataRepositoryManager repoMgr, Map<URI, IMetadataRepository> allrepositories,
-            URI location, boolean refresh, List<IStatus> errors, IProgressMonitor monitor)
-            throws ProvisionException, OperationCanceledException {
+            URI location, boolean refresh, List<IStatus> errors, IProgressMonitor monitor) throws ProvisionException {
         if (!allrepositories.containsKey(location)) {
             try {
                 IMetadataRepository repository;
@@ -524,7 +520,8 @@ public class MetadataRepositoryView extends ViewPart {
 
                 if (repository instanceof CompositeMetadataRepository) {
                     for (URI childUri : ((CompositeMetadataRepository) repository).getChildren()) {
-                        // composite repository refresh refreshes all child repositories. do not re-refresh children
+                        // composite repository refresh refreshes all child repositories. do not
+                        // re-refresh children
                         // here
                         loadRepository(repoMgr, allrepositories, childUri, false, errors, monitor);
                     }
@@ -584,7 +581,7 @@ public class MetadataRepositoryView extends ViewPart {
         IMetadataRepository target = repoMgr.createRepository(directory.toURI(), directory.getName(),
                 IMetadataRepositoryManager.TYPE_SIMPLE_REPOSITORY, new HashMap<String, String>());
 
-        Set<IInstallableUnit> units = new LinkedHashSet<IInstallableUnit>();
+        Set<IInstallableUnit> units = new LinkedHashSet<>();
 
         final Collection<IMetadataRepository> repositories = toMetadataRepositories(this.repositories);
 
@@ -604,9 +601,9 @@ public class MetadataRepositoryView extends ViewPart {
         final IArtifactRepository target = repoMgr.createRepository(directory.toURI(), directory.getName(),
                 IArtifactRepositoryManager.TYPE_SIMPLE_REPOSITORY, new HashMap<String, String>());
 
-        final Set<IArtifactDescriptor> artifacts = new LinkedHashSet<IArtifactDescriptor>();
+        final Set<IArtifactDescriptor> artifacts = new LinkedHashSet<>();
 
-        final ExpressionMatchQuery<IArtifactDescriptor> ALL_ARTIFACTS = new ExpressionMatchQuery<IArtifactDescriptor>(
+        final ExpressionMatchQuery<IArtifactDescriptor> ALL_ARTIFACTS = new ExpressionMatchQuery<>(
                 IArtifactDescriptor.class, ExpressionUtil.TRUE_EXPRESSION);
 
         for (final URI location : repositories) {
@@ -616,17 +613,6 @@ public class MetadataRepositoryView extends ViewPart {
         }
 
         target.addDescriptors(artifacts.toArray(new IArtifactDescriptor[artifacts.size()]), monitor);
-    }
-
-    private static String trim(String str) {
-        if (str == null) {
-            return null;
-        }
-        str = str.trim();
-        if ("".equals(str)) {
-            return null;
-        }
-        return str;
     }
 
 }

@@ -51,7 +51,7 @@ public class DependenciesCalculator implements IInstallableUnitHierarchyCalculat
 
     @Override
     public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-        Map<String, String> context = Collections.<String, String> emptyMap();
+        Map<String, String> context = Collections.emptyMap();
         PermissiveSlicer slicer = new PermissiveSlicer(allIUs, context, true, false, true, false, false);
         InstallableUnitDAG dag = slicer.slice(toArray(rootIUs), monitor);
 
@@ -73,7 +73,7 @@ public class DependenciesCalculator implements IInstallableUnitHierarchyCalculat
         dag = dag.filter(new InstallableUnitsMatcher(resolved), false);
 
         this.dag = dag;
-        this.resolved = new ArrayList<IInstallableUnit>(resolved);
+        this.resolved = new ArrayList<>(resolved);
     }
 
     private IInstallableUnit createEntryPointIU(Collection<IInstallableUnit> rootIUs) {
@@ -82,7 +82,7 @@ public class DependenciesCalculator implements IInstallableUnitHierarchyCalculat
         iud.setId(time);
         iud.setVersion(Version.createOSGi(0, 0, 0, time));
 
-        ArrayList<IRequirement> requirements = new ArrayList<IRequirement>();
+        ArrayList<IRequirement> requirements = new ArrayList<>();
         for (IInstallableUnit iu : rootIUs) {
             VersionRange range = new VersionRange(iu.getVersion(), true, iu.getVersion(), true);
             requirements.add(MetadataFactory.createRequirement(IInstallableUnit.NAMESPACE_IU_ID, iu.getId(), range,

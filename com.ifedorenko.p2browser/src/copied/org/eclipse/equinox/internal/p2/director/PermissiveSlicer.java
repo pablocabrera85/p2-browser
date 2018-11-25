@@ -9,6 +9,7 @@
 package copied.org.eclipse.equinox.internal.p2.director;
 
 import java.util.Map;
+
 import org.eclipse.equinox.internal.p2.metadata.RequiredCapability;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.IRequirement;
@@ -35,6 +36,7 @@ public class PermissiveSlicer extends Slicer {
         this.onlyFilteredRequirements = onlyFilteredRequirements;
     }
 
+    @Override
     protected boolean isApplicable(IInstallableUnit iu) {
         if (considerFilter)
             return super.isApplicable(iu);
@@ -43,15 +45,16 @@ public class PermissiveSlicer extends Slicer {
         return evalFilterTo;
     }
 
+    @Override
     protected boolean isApplicable(IRequirement req) {
-        // Every filter in this method needs to continue except when the filter does not pass
-        if (!includeOptionalDependencies)
-            if (req.getMin() == 0)
-                return false;
+        // Every filter in this method needs to continue except when the filter does not
+        // pass
+        if (!includeOptionalDependencies && req.getMin() == 0) {
+            return false;
+        }
 
-        if (considerOnlyStrictDependency) {
-            if (!RequiredCapability.isStrictVersionRequirement(req.getMatches()))
-                return false;
+        if (considerOnlyStrictDependency && !RequiredCapability.isStrictVersionRequirement(req.getMatches())) {
+            return false;
         }
 
         // deal with filters
@@ -69,6 +72,7 @@ public class PermissiveSlicer extends Slicer {
         return evalFilterTo;
     }
 
+    @Override
     protected boolean isGreedy(IRequirement req) {
         if (everythingGreedy) {
             return true;

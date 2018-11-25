@@ -17,8 +17,6 @@ import java.net.URISyntaxException;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -63,16 +61,14 @@ public class RepositoryLocationDialog extends TrayDialog {
         lblLocation.setText("Location");
 
         combo = new Combo(container, SWT.NONE);
-        combo.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e) {
-                try {
-                    location = new URI(combo.getText());
-                    message.setText("");
-                    getButton(IDialogConstants.OK_ID).setEnabled(true);
-                } catch (URISyntaxException ex) {
-                    message.setText(ex.getMessage());
-                    getButton(IDialogConstants.OK_ID).setEnabled(true);
-                }
+        combo.addModifyListener(event -> {
+            try {
+                location = new URI(combo.getText());
+                message.setText("");
+                getButton(IDialogConstants.OK_ID).setEnabled(true);
+            } catch (URISyntaxException ex) {
+                message.setText(ex.getMessage());
+                getButton(IDialogConstants.OK_ID).setEnabled(true);
             }
         });
         combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));

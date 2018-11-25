@@ -38,7 +38,7 @@ abstract class InstallableUnitContentProvider implements ILazyTreeContentProvide
 
     @Override
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        nodes = new HashMap<IInstallableUnit, InstallableUnitNode>();
+        nodes = new HashMap<>();
     }
 
     protected Object[] getChildren(Object parentElement) {
@@ -81,7 +81,7 @@ abstract class InstallableUnitContentProvider implements ILazyTreeContentProvide
     }
 
     protected Object[] toViewNodes(IGroupedInstallableUnits metadata, Collection<IInstallableUnit> units) {
-        ArrayList<InstallableUnitNode> nodes = new ArrayList<InstallableUnitNode>();
+        ArrayList<InstallableUnitNode> nodes = new ArrayList<>();
         for (IInstallableUnit unit : units) {
             InstallableUnitNode node = this.nodes.get(unit);
             if (node == null) {

@@ -19,6 +19,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 
     private static final String PERSPECTIVE_ID = "com.ifedorenko.p2browser.perspective";
 
+    @Override
     public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
         return new ApplicationWorkbenchWindowAdvisor(configurer);
     }

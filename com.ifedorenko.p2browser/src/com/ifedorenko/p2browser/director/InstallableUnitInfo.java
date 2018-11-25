@@ -20,7 +20,7 @@ import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 public class InstallableUnitInfo {
     private final IInstallableUnit unit;
 
-    private final Map<IInstallableUnit, InstallableUnitInfo> children = new LinkedHashMap<IInstallableUnit, InstallableUnitInfo>();
+    private final Map<IInstallableUnit, InstallableUnitInfo> children = new LinkedHashMap<>();
 
     public InstallableUnitInfo(IInstallableUnit unit) {
         this.unit = unit;

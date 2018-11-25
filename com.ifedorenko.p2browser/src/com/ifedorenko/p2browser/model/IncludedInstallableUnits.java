@@ -38,7 +38,7 @@ import com.ifedorenko.p2browser.director.InstallableUnitInfo;
 public class IncludedInstallableUnits {
 
     public InstallableUnitDAG toInstallableUnitDAG(Iterator<IInstallableUnit> iter) {
-        Map<IVersionedId, InstallableUnitInfo> nodes = new LinkedHashMap<IVersionedId, InstallableUnitInfo>();
+        Map<IVersionedId, InstallableUnitInfo> nodes = new LinkedHashMap<>();
 
         while (iter.hasNext()) {
             IInstallableUnit iu = iter.next();
@@ -51,7 +51,7 @@ public class IncludedInstallableUnits {
             }
         }
 
-        Map<IInstallableUnit, InstallableUnitInfo> units = new LinkedHashMap<IInstallableUnit, InstallableUnitInfo>();
+        Map<IInstallableUnit, InstallableUnitInfo> units = new LinkedHashMap<>();
         for (InstallableUnitInfo info : nodes.values()) {
             units.put(info.getInstallableUnit(), info);
         }
@@ -65,7 +65,7 @@ public class IncludedInstallableUnits {
     }
 
     private void breakCycles(InstallableUnitInfo unit, Deque<InstallableUnitInfo> visited) {
-        ArrayList<InstallableUnitInfo> cycles = new ArrayList<InstallableUnitInfo>();
+        ArrayList<InstallableUnitInfo> cycles = new ArrayList<>();
 
         for (InstallableUnitInfo child : unit.getChildren()) {
             if (visited.contains(child)) {
@@ -109,7 +109,7 @@ public class IncludedInstallableUnits {
 
     private static Collection<InstallableUnitInfo> getIncludedInstallableUnit(
             Map<IVersionedId, InstallableUnitInfo> nodes, IInstallableUnit parent) {
-        Set<InstallableUnitInfo> result = new LinkedHashSet<InstallableUnitInfo>();
+        Set<InstallableUnitInfo> result = new LinkedHashSet<>();
 
         for (IRequirement r : parent.getRequirements()) {
             if (r instanceof IRequiredCapability) {

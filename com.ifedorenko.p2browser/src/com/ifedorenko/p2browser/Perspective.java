@@ -18,6 +18,8 @@ import org.eclipse.ui.IPerspectiveFactory;
 import com.ifedorenko.p2browser.views.MetadataRepositoryView;
 
 public class Perspective implements IPerspectiveFactory {
+
+    @Override
     public void createInitialLayout(IPageLayout layout) {
         layout.setEditorAreaVisible(false);
 

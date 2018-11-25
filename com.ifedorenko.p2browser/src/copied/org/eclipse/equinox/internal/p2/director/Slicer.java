@@ -11,9 +11,24 @@
  *******************************************************************************/
 package copied.org.eclipse.equinox.internal.p2.director;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.internal.p2.core.helpers.LogHelper;
 import org.eclipse.equinox.internal.p2.core.helpers.Tracing;
 import org.eclipse.equinox.internal.p2.director.DirectorActivator;
@@ -21,9 +36,16 @@ import org.eclipse.equinox.internal.p2.director.Messages;
 import org.eclipse.equinox.internal.p2.director.QueryableArray;
 import org.eclipse.equinox.internal.p2.metadata.InstallableUnit;
 import org.eclipse.equinox.internal.p2.metadata.InstallableUnitPatch;
-import org.eclipse.equinox.p2.metadata.*;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.IInstallableUnitFragment;
+import org.eclipse.equinox.p2.metadata.IInstallableUnitPatch;
+import org.eclipse.equinox.p2.metadata.IRequirement;
+import org.eclipse.equinox.p2.metadata.IRequirementChange;
+import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.equinox.p2.metadata.expression.IMatchExpression;
-import org.eclipse.equinox.p2.query.*;
+import org.eclipse.equinox.p2.query.IQueryResult;
+import org.eclipse.equinox.p2.query.IQueryable;
+import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.osgi.util.NLS;
 
 import com.ifedorenko.p2browser.director.InstallableUnitDAG;
@@ -41,8 +63,8 @@ public class Slicer {
 
     private LinkedList<IInstallableUnit> toProcess;
     private Map<IInstallableUnit, InstallableUnitInfo> considered; // IUs to add to the slice
-    private Set<IInstallableUnit> nonGreedyIUs = new HashSet<IInstallableUnit>(); // IUs that are brought in by non
-                                                                                  // greedy dependencies
+    private Set<IInstallableUnit> nonGreedyIUs = new HashSet<>(); // IUs that are brought in by non
+                                                                  // greedy dependencies
 
     public Slicer(IQueryable<IInstallableUnit> input, Map<String, String> context, boolean considerMetaRequirements) {
         this(input, InstallableUnit.contextIU(context), considerMetaRequirements);
@@ -53,7 +75,7 @@ public class Slicer {
         this.possibilites = possibilites;
         this.selectionContext = selectionContext;
         this.considerMetaRequirements = considerMetaRequirements;
-        slice = new HashMap<String, Map<Version, IInstallableUnit>>();
+        slice = new HashMap<>();
         result = new MultiStatus(DirectorActivator.PI_DIRECTOR, IStatus.OK, Messages.Planner_Problems_resolving_plan,
                 null);
     }
@@ -67,11 +89,11 @@ public class Slicer {
             }
 
             validateInput(ius);
-            considered = new LinkedHashMap<IInstallableUnit, InstallableUnitInfo>();
+            considered = new LinkedHashMap<>();
             for (IInstallableUnit iu : ius) {
                 considered.put(iu, new InstallableUnitInfo(iu));
             }
-            toProcess = new LinkedList<IInstallableUnit>(Arrays.asList(ius));
+            toProcess = new LinkedList<>(Arrays.asList(ius));
             while (!toProcess.isEmpty()) {
                 if (monitor.isCanceled()) {
                     result.merge(Status.CANCEL_STATUS);
@@ -116,7 +138,8 @@ public class Slicer {
         return result;
     }
 
-    // This is a shortcut to simplify the error reporting when the filter of the ius we are being asked to install does
+    // This is a shortcut to simplify the error reporting when the filter of the ius
+    // we are being asked to install does
     // not pass
     private void validateInput(IInstallableUnit[] ius) {
         for (int i = 0; i < ius.length; i++) {
@@ -142,7 +165,7 @@ public class Slicer {
         Map<Version, IInstallableUnit> iuSlice = slice.get(iu.getId());
         if (iuSlice == null) {
 
-            iuSlice = new HashMap<Version, IInstallableUnit>();
+            iuSlice = new HashMap<>();
             slice.put(iu.getId(), iuSlice);
         }
         iuSlice.put(iu.getVersion(), iu);
@@ -154,12 +177,8 @@ public class Slicer {
         if (reqs.isEmpty())
             return;
         for (IRequirement req : reqs) {
-            if (!isApplicable(req))
+            if (!isApplicable(req) || !isGreedy(req))
                 continue;
-
-            if (!isGreedy(req)) {
-                continue;
-            }
 
             expandRequirement(iu, req);
         }
@@ -173,10 +192,10 @@ public class Slicer {
         boolean isPatch = iu instanceof IInstallableUnitPatch;
         boolean isFragment = iu instanceof IInstallableUnitFragment;
         // Short-circuit for the case of an IInstallableUnit
-        if ((!isFragment) && (!isPatch) && iu.getMetaRequirements().size() == 0)
+        if ((!isFragment) && (!isPatch) && iu.getMetaRequirements().isEmpty())
             return iu.getRequirements();
 
-        ArrayList<IRequirement> aggregatedRequirements = new ArrayList<IRequirement>(iu.getRequirements().size()
+        ArrayList<IRequirement> aggregatedRequirements = new ArrayList<>(iu.getRequirements().size()
                 + iu.getMetaRequirements().size() + (isFragment ? ((IInstallableUnitFragment) iu).getHost().size() : 0)
                 + (isPatch ? ((IInstallableUnitPatch) iu).getRequirementsChange().size() : 0));
         aggregatedRequirements.addAll(iu.getRequirements());

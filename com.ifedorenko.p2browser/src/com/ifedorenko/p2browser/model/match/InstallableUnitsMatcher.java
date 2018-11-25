@@ -21,7 +21,7 @@ public class InstallableUnitsMatcher implements IInstallableUnitMatcher {
     private final Set<IInstallableUnit> units;
 
     public InstallableUnitsMatcher(Collection<IInstallableUnit> units) {
-        this.units = new HashSet<IInstallableUnit>(units);
+        this.units = new HashSet<>(units);
     }
 
     @Override

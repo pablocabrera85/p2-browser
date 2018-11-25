@@ -10,19 +10,15 @@
  *******************************************************************************/
 package com.ifedorenko.p2browser.model.match;
 
+@FunctionalInterface
 public interface IMatchStrategy {
-    public static final IMatchStrategy PREFIX = new IMatchStrategy() {
-        @Override
-        public boolean match(String string, String pattern) {
-            return string != null && string.contains(pattern);
-        }
+
+    public static final IMatchStrategy PREFIX = (string, pattern) -> {
+        return string != null && string.contains(pattern);
     };
 
-    public static final IMatchStrategy EXACT = new IMatchStrategy() {
-        @Override
-        public boolean match(String string, String pattern) {
-            return string != null && string.equals(pattern);
-        }
+    public static final IMatchStrategy EXACT = (string, pattern) -> {
+        return string != null && string.equals(pattern);
     };
 
     public boolean match(String string, String pattern);

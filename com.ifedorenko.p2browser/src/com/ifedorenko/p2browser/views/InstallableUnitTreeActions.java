@@ -199,11 +199,6 @@ abstract class InstallableUnitTreeActions {
         tbm.add(collapseAll);
     }
 
-    // private void initializeMenu()
-    // {
-    // IMenuManager manager = getViewSite().getActionBars().getMenuManager();
-    // }
-
     protected void openHierarchyView(String viewId) {
         IWorkbenchPage activePage = getSite().getWorkbenchWindow().getActivePage();
 
@@ -220,7 +215,6 @@ abstract class InstallableUnitTreeActions {
 
             iusView.setMetadata(getAllInstallableUnits(), InstallableUnitNode.toInstallableUnits(selection));
         } catch (PartInitException e1) {
-            // TODO Auto-generated catch block
             e1.printStackTrace();
         }
 
@@ -263,15 +257,14 @@ abstract class InstallableUnitTreeActions {
                         node.getInstallableUnit().getId(), IWorkbenchPage.VIEW_ACTIVATE | IWorkbenchPage.VIEW_CREATE);
                 iuView.setInstallableUnit(node.getMetadata(), node.getInstallableUnit());
             } catch (PartInitException e1) {
-                // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
         }
     }
 
     protected void copyToClipboard() {
-        List<Transfer> dataTypes = new ArrayList<Transfer>();
-        List<Object> data = new ArrayList<Object>();
+        List<Transfer> dataTypes = new ArrayList<>();
+        List<Object> data = new ArrayList<>();
 
         addToClipboard(dataTypes, data);
 
@@ -362,7 +355,7 @@ abstract class InstallableUnitTreeActions {
                             IMetadataRepositoryManager.TYPE_SIMPLE_REPOSITORY, new HashMap<String, String>());
                 }
 
-                Collection<IInstallableUnit> units = new ArrayList<IInstallableUnit>();
+                Collection<IInstallableUnit> units = new ArrayList<>();
                 for (InstallableUnitNode node : selection) {
                     units.add(node.getInstallableUnit());
                 }
@@ -382,11 +375,9 @@ abstract class InstallableUnitTreeActions {
                             IArtifactRepositoryManager.TYPE_SIMPLE_REPOSITORY, new HashMap<String, String>());
                 }
 
-                // IArtifactRepository targetRepository = repoManager.loadRepository( directory.toURI(), monitor );
                 ProvisioningContext ctx = new ProvisioningContext(agent);
                 Collection<URI> repos = getRepositoryLocations();
                 if (repos != null) {
-                    // ctx.setMetadataRepositories( repos.toArray( new URI[repos.size()] ) );
                     ctx.setArtifactRepositories(repos.toArray(new URI[repos.size()]));
                 }
                 DownloadManager mgr = new DownloadManager(ctx, agent);

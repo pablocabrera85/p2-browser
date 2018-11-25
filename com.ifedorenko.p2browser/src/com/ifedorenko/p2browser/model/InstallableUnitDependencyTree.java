@@ -55,7 +55,7 @@ public class InstallableUnitDependencyTree implements IGroupedInstallableUnits {
             return toInstallableUnits(children);
         }
 
-        return addIncludedInstallableUnits(children, new LinkedHashSet<IInstallableUnit>());
+        return addIncludedInstallableUnits(children, new LinkedHashSet<>());
     }
 
     private Collection<IInstallableUnit> addIncludedInstallableUnits(Collection<InstallableUnitInfo> children,
@@ -70,7 +70,7 @@ public class InstallableUnitDependencyTree implements IGroupedInstallableUnits {
     }
 
     private Collection<IInstallableUnit> toInstallableUnits(Collection<InstallableUnitInfo> units) {
-        List<IInstallableUnit> result = new ArrayList<IInstallableUnit>();
+        List<IInstallableUnit> result = new ArrayList<>();
         for (InstallableUnitInfo unit : units) {
             result.add(unit.getInstallableUnit());
         }

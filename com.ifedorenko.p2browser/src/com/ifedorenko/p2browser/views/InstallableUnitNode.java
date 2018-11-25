@@ -41,7 +41,7 @@ class InstallableUnitNode {
     }
 
     public static Collection<IInstallableUnit> toInstallableUnits(Collection<InstallableUnitNode> nodes) {
-        List<IInstallableUnit> result = new ArrayList<IInstallableUnit>();
+        List<IInstallableUnit> result = new ArrayList<>();
 
         for (InstallableUnitNode node : nodes) {
             result.add(node.getInstallableUnit());

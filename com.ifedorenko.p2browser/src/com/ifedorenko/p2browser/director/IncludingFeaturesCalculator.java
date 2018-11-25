@@ -38,7 +38,7 @@ public class IncludingFeaturesCalculator extends ReferencesCalculator {
         }
 
         return Boolean.parseBoolean(unit.getProperty(InstallableUnitDescription.PROP_TYPE_GROUP));
-    };
+    }
 
     @Override
     protected boolean isInteresting(IRequirement requirement) {

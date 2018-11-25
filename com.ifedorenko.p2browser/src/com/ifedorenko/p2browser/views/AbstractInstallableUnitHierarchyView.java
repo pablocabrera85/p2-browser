@@ -35,10 +35,8 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -87,12 +85,9 @@ public abstract class AbstractInstallableUnitHierarchyView extends ViewPart {
     Job applyFilterJob = new Job("Apply filter") {
         @Override
         protected IStatus run(IProgressMonitor monitor) {
-            getSite().getShell().getDisplay().asyncExec(new Runnable() {
-                @Override
-                public void run() {
-                    applyHierachyFilter();
-                    applyListFilter();
-                }
+            getSite().getShell().getDisplay().asyncExec(() -> {
+                applyHierachyFilter();
+                applyListFilter();
             });
             return Status.OK_STATUS;
         }
@@ -145,20 +140,22 @@ public abstract class AbstractInstallableUnitHierarchyView extends ViewPart {
         ToolBarManager hierarchyToolBarManager = new ToolBarManager(hierarchyToolBar);
         hierarchyToolBarManager.add(new Action("Expand All",
                 ResourceManager.getPluginImageDescriptor("com.ifedorenko.p2browser", "icons/expandall.gif")) {
+            @Override
             public void run() {
                 hierarchyTreeViewer.getTree().setRedraw(false);
                 hierarchyTreeViewer.expandAll();
                 hierarchyTreeViewer.getTree().setRedraw(true);
-            };
+            }
         });
         hierarchyToolBarManager.add(new Action("Collapse All",
                 ResourceManager.getPluginImageDescriptor("com.ifedorenko.p2browser", "icons/collapseall.gif")) {
+            @Override
             public void run() {
                 hierarchyTreeViewer.getTree().setRedraw(false);
                 hierarchyTreeViewer.collapseAll();
                 hierarchyTreeViewer.expandToLevel(2);
                 hierarchyTreeViewer.getTree().setRedraw(true);
-            };
+            }
         });
         hierarchyToolBarManager.add(new Separator());
         filterHierarchyAction = new Action("Filter",
@@ -168,10 +165,11 @@ public abstract class AbstractInstallableUnitHierarchyView extends ViewPart {
                 return AS_CHECK_BOX;
             }
 
+            @Override
             public void run() {
                 filterHierarchy = isChecked();
                 applyHierachyFilter();
-            };
+            }
         };
         filterHierarchyAction.setChecked(filterHierarchy);
         hierarchyToolBarManager.add(filterHierarchyAction);
@@ -238,15 +236,13 @@ public abstract class AbstractInstallableUnitHierarchyView extends ViewPart {
         Table listTable = listTableViewer.getTable();
         listSection.setClient(listTable);
 
-        listTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-            public void selectionChanged(SelectionChangedEvent event) {
-                Set<IInstallableUnit> units = toInstallableUnits(listTableViewer.getSelection());
+        listTableViewer.addSelectionChangedListener(event -> {
+            Set<IInstallableUnit> units = toInstallableUnits(listTableViewer.getSelection());
 
-                filterHierarchyAction.setEnabled(units == null);
-                filterHierarchyAction.setChecked(units == null ? filterHierarchy : false);
+            filterHierarchyAction.setEnabled(units == null);
+            filterHierarchyAction.setChecked(units == null ? filterHierarchy : false);
 
-                applyHierachyFilter(units);
-            }
+            applyHierachyFilter(units);
         });
 
         listTableViewer.setContentProvider(new IStructuredContentProvider() {
@@ -264,7 +260,7 @@ public abstract class AbstractInstallableUnitHierarchyView extends ViewPart {
                     List<?> elements = (List<?>) inputElement;
 
                     if (sortList) {
-                        elements = new ArrayList<Object>(elements); // do not sort original collection
+                        elements = new ArrayList<>(elements); // do not sort original collection
                         Collections.sort(elements, new Comparator<Object>() {
                             @Override
                             public int compare(Object o1, Object o2) {
@@ -373,7 +369,7 @@ public abstract class AbstractInstallableUnitHierarchyView extends ViewPart {
     Set<IInstallableUnit> toInstallableUnits(ISelection selection) {
         Set<IInstallableUnit> units = null;
         if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
-            units = new HashSet<IInstallableUnit>();
+            units = new HashSet<>();
 
             Iterator<?> iter = ((IStructuredSelection) selection).iterator();
             while (iter.hasNext()) {
@@ -399,11 +395,7 @@ public abstract class AbstractInstallableUnitHierarchyView extends ViewPart {
     protected void run(IRunnableWithProgress runnable) {
         try {
             getViewSite().getWorkbenchWindow().run(true, true, runnable);
-        } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
+        } catch (InvocationTargetException | InterruptedException e) {
             e.printStackTrace();
         }
     }

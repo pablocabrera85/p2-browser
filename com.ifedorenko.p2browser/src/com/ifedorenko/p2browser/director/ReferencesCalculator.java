@@ -54,10 +54,10 @@ public class ReferencesCalculator implements IInstallableUnitHierarchyCalculator
         SubMonitor monitor = SubMonitor.convert(progress, 100);
 
         // all requirements satisfied by a given IU
-        Map<IInstallableUnit, Set<IRequirement>> providers = new LinkedHashMap<IInstallableUnit, Set<IRequirement>>();
+        Map<IInstallableUnit, Set<IRequirement>> providers = new LinkedHashMap<>();
 
         // all IUs with a given requirement
-        Map<IRequirement, Set<IInstallableUnit>> requirements = new LinkedHashMap<IRequirement, Set<IInstallableUnit>>();
+        Map<IRequirement, Set<IInstallableUnit>> requirements = new LinkedHashMap<>();
 
         index(providers, requirements, monitor.newChild(80));
 
@@ -114,7 +114,7 @@ public class ReferencesCalculator implements IInstallableUnitHierarchyCalculator
             Map<IRequirement, Set<IInstallableUnit>> requirements, SubMonitor monitor) {
         monitor.beginTask("", requirements.size()); // don't ask why
 
-        Map<IInstallableUnit, InstallableUnitInfo> result = new LinkedHashMap<IInstallableUnit, InstallableUnitInfo>();
+        Map<IInstallableUnit, InstallableUnitInfo> result = new LinkedHashMap<>();
 
         for (IInstallableUnit unit : roots) {
             calculate(result, providers, requirements, unit, new LinkedList<IInstallableUnit>(),
@@ -158,7 +158,7 @@ public class ReferencesCalculator implements IInstallableUnitHierarchyCalculator
     private static <K, V> void put(Map<K, Set<V>> map, K key, V value) {
         Set<V> set = map.get(key);
         if (set == null) {
-            set = new LinkedHashSet<V>();
+            set = new LinkedHashSet<>();
             map.put(key, set);
         }
         set.add(value);
@@ -190,7 +190,7 @@ public class ReferencesCalculator implements IInstallableUnitHierarchyCalculator
     }
 
     public List<IInstallableUnit> getList() {
-        return new ArrayList<IInstallableUnit>(result.getInstallableUnits());
+        return new ArrayList<>(result.getInstallableUnits());
     }
 
 }
