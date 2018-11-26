@@ -83,11 +83,7 @@ abstract class InstallableUnitContentProvider implements ILazyTreeContentProvide
     protected Object[] toViewNodes(IGroupedInstallableUnits metadata, Collection<IInstallableUnit> units) {
         ArrayList<InstallableUnitNode> nodes = new ArrayList<>();
         for (IInstallableUnit unit : units) {
-            InstallableUnitNode node = this.nodes.get(unit);
-            if (node == null) {
-                node = new InstallableUnitNode(metadata, unit);
-                this.nodes.put(unit, node);
-            }
+            InstallableUnitNode node = this.nodes.computeIfAbsent(unit, key -> new InstallableUnitNode(metadata, key));
             nodes.add(node);
         }
         return nodes.toArray();

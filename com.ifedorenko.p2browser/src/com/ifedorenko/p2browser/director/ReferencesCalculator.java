@@ -156,11 +156,7 @@ public class ReferencesCalculator implements IInstallableUnitHierarchyCalculator
     }
 
     private static <K, V> void put(Map<K, Set<V>> map, K key, V value) {
-        Set<V> set = map.get(key);
-        if (set == null) {
-            set = new LinkedHashSet<>();
-            map.put(key, set);
-        }
+        Set<V> set = map.computeIfAbsent(key, x -> new LinkedHashSet<>());
         set.add(value);
     }
 
@@ -172,12 +168,7 @@ public class ReferencesCalculator implements IInstallableUnitHierarchyCalculator
     }
 
     private InstallableUnitInfo getOrNew(Map<IInstallableUnit, InstallableUnitInfo> result, IInstallableUnit parent) {
-        InstallableUnitInfo info = result.get(parent);
-        if (info == null) {
-            info = new InstallableUnitInfo(parent);
-            result.put(parent, info);
-        }
-        return info;
+        return result.computeIfAbsent(parent, key -> new InstallableUnitInfo(key));
     }
 
     @Override
