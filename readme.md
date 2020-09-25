@@ -30,19 +30,15 @@ run p2-browser as a standalone RCP application
     ├── com.ifedorenko.p2browser.rcp
     │   ├── linux
     │   │   └── gtk
-    │   │       ├── x86
     │   │       └── x86_64
     │   ├── macosx
     │   │   └── cocoa
     │   │       └── x86_64
     │   └── win32
     │       └── win32
-    │           ├── x86
     │           └── x86_64
-    ├── com.ifedorenko.p2browser.rcp-linux.gtk.x86.tar.gz
     ├── com.ifedorenko.p2browser.rcp-linux.gtk.x86_64.tar.gz
     ├── com.ifedorenko.p2browser.rcp-macosx.cocoa.x86_64.tar.gz
-    ├── com.ifedorenko.p2browser.rcp-win32.win32.x86.zip
     └── com.ifedorenko.p2browser.rcp-win32.win32.x86_64.zip
 ```
 
