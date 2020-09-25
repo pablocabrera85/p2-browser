@@ -10,8 +10,7 @@
 
 ## Building and running p2-browser locally
 
-As of 2013-11-11, p2-browser Java WebStart Launcher appears to be broken on all recent versions of Java. To build and 
-run p2-browser as a standalone RCP application
+To build and run p2-browser as a standalone RCP application
 
 * Make sure a recent version of JDK is installed and available on PATH
 * If you don't already have Maven, download [latest version of Maven](http://maven.apache.org/download.cgi) and
@@ -44,13 +43,3 @@ run p2-browser as a standalone RCP application
 
 * To start p2-browser, execute p2browser (or p2browser.exe, if you happen to be on Windows) from the root of RCP app
   for your platform.
-
-## Java WebStart Launcher
-
-On some platforms, p2browser can be started by [following this link](http://ifedorenko.github.com/p2-browser/javaws/com.ifedorenko.p2browser.jnlp).
-
-If the link above does not work, which appear to be the case on some/many Linux distributions, then
-p2browser can be started using the following command on command line
-
-    javaws  http://ifedorenko.github.com/p2-browser/javaws/com.ifedorenko.p2browser.jnlp
-
