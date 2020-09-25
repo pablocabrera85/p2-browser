@@ -12,12 +12,14 @@
 package com.ifedorenko.p2browser.views;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EventObject;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -27,6 +29,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -47,7 +50,10 @@ import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IFontProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -107,6 +113,8 @@ public class MetadataRepositoryView extends ViewPart {
 
     private IInstallableUnitMatcher unitMatcher;
 
+    private InstallableUnitContentProvider contentProvider;
+
     private class LabelProvider extends InstallableUnitLabelProvider implements IFontProvider {
 
         @Override
@@ -136,19 +144,31 @@ public class MetadataRepositoryView extends ViewPart {
 
     }
 
-    private Job refreshTreeJob = new Job("Refresh") {
-        @Override
-        protected IStatus run(IProgressMonitor monitor) {
-            repositoryContent.clear();
-            for (URI location : repositories) {
-                loadRepositoryContent(repositoryContent, location, monitor);
+    private Job refreshTreeJob = null;
+
+    private Job createRefreshTreeJob() {
+        return new Job("Refresh") {
+            @Override
+            protected IStatus run(IProgressMonitor monitor) {
+                repositoryContent.clear();
+                for (URI location : repositories) {
+                    loadRepositoryContent(repositoryContent, location, monitor);
+                }
+
+                refreshTreeInDisplayThread();
+
+                return Status.OK_STATUS;
             }
+        };
+    }
 
-            refreshTreeInDisplayThread();
-
-            return Status.OK_STATUS;
+    private void scheduleRefreshTreeJob() {
+        if (refreshTreeJob != null) {
+            refreshTreeJob.cancel();
         }
-    };
+        refreshTreeJob = createRefreshTreeJob();
+        refreshTreeJob.schedule(500L);
+    }
 
     private Font boldFont;
 
@@ -176,7 +196,7 @@ public class MetadataRepositoryView extends ViewPart {
                 @Override
                 public void filterChanged(EventObject event) {
                     unitMatcher = filterComposite.getMatcher();
-                    refreshTreeJob.schedule(500L);
+                    scheduleRefreshTreeJob();
                 }
             });
         }
@@ -215,9 +235,24 @@ public class MetadataRepositoryView extends ViewPart {
                 Button btnRemove = new Button(composite, SWT.NONE);
                 GridData gd_btnRemove = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
                 gd_btnRemove.horizontalIndent = 10;
+
                 btnRemove.setLayoutData(gd_btnRemove);
                 toolkit.adapt(btnRemove, true, true);
                 btnRemove.setText("Remove");
+                btnRemove.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent e) {
+                        IStructuredSelection sel = (IStructuredSelection) treeViewer.getSelection();
+                        Iterator i = sel.iterator();
+                        while (i.hasNext()) {
+                            Object inext = i.next();
+                            if (inext instanceof IRepository) {
+                                repositories.remove(((IRepository) inext).getLocation());
+                            }
+                        }
+                        treeViewer.refresh();
+                    }
+                });
             }
             {
                 Button btnReloadAll = new Button(composite, SWT.NONE);
@@ -261,7 +296,7 @@ public class MetadataRepositoryView extends ViewPart {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
                         groupIncludedIUs = btnGroupInlcuded.getSelection();
-                        refreshTreeJob.schedule(500L);
+                        scheduleRefreshTreeJob();
                     }
                 });
                 btnGroupInlcuded.setSelection(groupIncludedIUs);
@@ -278,7 +313,7 @@ public class MetadataRepositoryView extends ViewPart {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
                         revealCompositeRepositories = btnChildRepositories.getSelection();
-                        refreshTreeJob.schedule(500L);
+                        scheduleRefreshTreeJob();
                     }
                 });
                 btnChildRepositories.setSelection(revealCompositeRepositories);
@@ -293,9 +328,10 @@ public class MetadataRepositoryView extends ViewPart {
             tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
             tree.setLinesVisible(true);
             treeViewer.setLabelProvider(new LabelProvider());
-            treeViewer.setContentProvider(new InstallableUnitContentProvider(treeViewer) {
+
+            contentProvider = new InstallableUnitContentProvider(treeViewer) {
                 @Override
-                protected Object[] getChildren(Object parentElement) {
+                public Object[] getChildren(Object parentElement) {
                     if (parentElement == repositories) {
                         List<Object> result = new ArrayList<Object>();
                         for (URI location : repositories) {
@@ -321,7 +357,9 @@ public class MetadataRepositoryView extends ViewPart {
                     }
                     return super.getChildren(parentElement);
                 }
-            });
+            };
+
+            treeViewer.setContentProvider(contentProvider);
             treeViewer.setInput(repositories);
             treeViewer.getTree().setItemCount(repositories.size());
             toolkit.paintBordersFor(tree);
@@ -438,8 +476,17 @@ public class MetadataRepositoryView extends ViewPart {
         return result;
     }
 
+    public static abstract class AddRepoJob extends Job {
+        public AddRepoJob(String name) {
+            super(name);
+        }
+
+        public abstract IStatus run2(IProgressMonitor mon);
+    }
+
     protected void addRepository(final URI location) {
-        Job job = new Job("Load repository metadata") {
+
+        final AddRepoJob job = new AddRepoJob("Load repository metadata") {
             @Override
             protected IStatus run(IProgressMonitor monitor) {
                 List<IStatus> errors = new ArrayList<IStatus>();
@@ -464,9 +511,29 @@ public class MetadataRepositoryView extends ViewPart {
 
                 return toStatus(errors);
             }
+
+            public IStatus run2(IProgressMonitor mon) {
+                return run(mon);
+            }
         };
-        job.setUser(true);
-        job.schedule();
+
+        ProgressMonitorDialog d = new ProgressMonitorDialog(this.getSite().getShell());
+        IRunnableWithProgress op = new IRunnableWithProgress() {
+            @Override
+            public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                job.run2(monitor);
+            }
+        };
+        try {
+            d.run(true, true, op);
+        } catch (InvocationTargetException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        ;
     }
 
     protected Object[] getImmediateChildrenRepositories(final CompositeMetadataRepository repository) {
@@ -495,14 +562,40 @@ public class MetadataRepositoryView extends ViewPart {
     }
 
     private void refreshTreeInDisplayThread() {
-        getSite().getShell().getDisplay().asyncExec(() -> {
-            treeViewer.getTree().setRedraw(false);
-            treeViewer.getTree().setItemCount(repositories.size());
-            treeViewer.refresh();
-            if (unitMatcher != null) {
-                treeViewer.expandAll();
+        refreshTreeInDisplayThread(new NullProgressMonitor());
+    }
+
+    private void cacheRecursive(Object o, IProgressMonitor mon) {
+        Object[] ret = contentProvider.getChildren(o);
+        if (mon != null && mon.isCanceled()) {
+            return;
+        }
+
+        if (ret != null) {
+            for (int i = 0; i < ret.length; i++) {
+                cacheRecursive(ret[i], mon);
             }
-            treeViewer.getTree().setRedraw(true);
+        }
+    }
+
+    private void refreshTreeInDisplayThread(IProgressMonitor monitor) {
+        // get children recursively first to cache everything NOT in the UI thread
+        cacheRecursive(repositories, monitor);
+        if (monitor.isCanceled()) {
+            return;
+        }
+
+        getSite().getShell().getDisplay().asyncExec(new Runnable() {
+            @Override
+            public void run() {
+                treeViewer.getTree().setRedraw(false);
+                treeViewer.getTree().setItemCount(repositories.size());
+                treeViewer.refresh();
+                if (unitMatcher != null) {
+                    treeViewer.expandAll();
+                }
+                treeViewer.getTree().setRedraw(true);
+            }
         });
     }
 
