@@ -65,17 +65,20 @@ public class RepositoryLocationDialog extends TrayDialog {
             try {
                 location = new URI(combo.getText());
                 message.setText("");
+                message.setVisible(false);
                 getButton(IDialogConstants.OK_ID).setEnabled(true);
             } catch (URISyntaxException ex) {
                 message.setText(ex.getMessage());
-                getButton(IDialogConstants.OK_ID).setEnabled(true);
+                message.setVisible(true);
+                getButton(IDialogConstants.OK_ID).setEnabled(false);
             }
         });
         combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-        message = new Text(container, SWT.BORDER | SWT.READ_ONLY);
+        message = new Text(container, SWT.BORDER | SWT.READ_ONLY | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
         message.setEditable(false);
-        message.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+        message.setVisible(false);
+        message.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 
         return container;
     }
@@ -102,12 +105,12 @@ public class RepositoryLocationDialog extends TrayDialog {
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        newShell.setText("Repository location");
+        newShell.setText("Add repository");
     }
 
     @Override
     protected Point getInitialSize() {
-        return new Point(450, 300);
+        return new Point(450, 200);
     }
 
     public URI getLocation() {
