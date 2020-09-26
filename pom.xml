@@ -15,9 +15,9 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <version>2.0.0-SNAPSHOT</version>
   <groupId>com.ifedorenko.p2-browser</groupId>
   <artifactId>p2-browser</artifactId>
+  <version>2.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
@@ -38,18 +38,6 @@
       <layout>p2</layout>
     </repository>
   </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>tycho-snapshots</id>
-      <url>https://oss.sonatype.org/content/groups/staging</url>
-    </pluginRepository>
-    <pluginRepository>
-      <id>tycho-jnlp-snapshots</id>
-      <url>https://repository.sonatype.org/content/repositories/snapshots/</url>
-      <snapshots><enabled>true</enabled></snapshots>
-    </pluginRepository>
-  </pluginRepositories>
 
   <build>
     <sourceDirectory>${project.basedir}/src</sourceDirectory>
