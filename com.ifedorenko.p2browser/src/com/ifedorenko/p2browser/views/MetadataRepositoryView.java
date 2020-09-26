@@ -243,11 +243,11 @@ public class MetadataRepositoryView extends ViewPart {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
                         IStructuredSelection sel = (IStructuredSelection) treeViewer.getSelection();
-                        Iterator i = sel.iterator();
+                        Iterator<?> i = sel.iterator();
                         while (i.hasNext()) {
                             Object inext = i.next();
                             if (inext instanceof IRepository) {
-                                repositories.remove(((IRepository) inext).getLocation());
+                                repositories.remove(((IRepository<?>) inext).getLocation());
                             }
                         }
                         treeViewer.refresh();

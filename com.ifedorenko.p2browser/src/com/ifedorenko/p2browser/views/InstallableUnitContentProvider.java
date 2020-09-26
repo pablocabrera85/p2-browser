@@ -25,14 +25,11 @@ import com.ifedorenko.p2browser.model.IGroupedInstallableUnits;
 
 public class InstallableUnitContentProvider implements ITreeContentProvider {
 
-    private final TreeViewer treeViewer;
-
     private Map<IInstallableUnit, InstallableUnitNode> nodes;
     private HashMap<Object, Object[]> cachedChildren;
     private HashMap<Object, Long> cachedExpiration;
 
     public InstallableUnitContentProvider(TreeViewer treeViewer) {
-        this.treeViewer = treeViewer;
     }
 
     @Override
