@@ -17,19 +17,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
-import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.ILazyTreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 
 import com.ifedorenko.p2browser.model.IGroupedInstallableUnits;
 
-public class InstallableUnitContentProvider implements ITreeContentProvider {
+abstract class InstallableUnitLazyContentProvider implements ILazyTreeContentProvider {
+    private final TreeViewer treeViewer;
 
     private Map<IInstallableUnit, InstallableUnitNode> nodes;
-    private HashMap<Object, Object[]> cachedChildren;
-    private HashMap<Object, Long> cachedExpiration;
 
-    public InstallableUnitContentProvider(TreeViewer treeViewer) {
+    public InstallableUnitLazyContentProvider(TreeViewer treeViewer) {
+        this.treeViewer = treeViewer;
     }
 
     @Override
@@ -38,14 +38,10 @@ public class InstallableUnitContentProvider implements ITreeContentProvider {
 
     @Override
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        nodes = new HashMap<>();
+        nodes = new HashMap<IInstallableUnit, InstallableUnitNode>();
     }
 
-    public Object[] getChildren(Object parentElement) {
-        return getCachedChildren(parentElement, 20000);
-    }
-
-    public Object[] getChildrenInternal(Object parentElement) {
+    protected Object[] getChildren(Object parentElement) {
         if (parentElement instanceof IGroupedInstallableUnits) {
             IGroupedInstallableUnits metadata = (IGroupedInstallableUnits) parentElement;
             return toViewNodes(metadata, metadata.getRootIncludedInstallableUnits());
@@ -57,6 +53,9 @@ public class InstallableUnitContentProvider implements ITreeContentProvider {
         return null;
     }
 
+    private HashMap<Object, Object[]> cachedChildren;
+    private HashMap<Object, Long> cachedExpiration;
+
     private Object[] getCachedChildren(Object parentElement, long duration) {
         if (cachedChildren == null) {
             cachedChildren = new HashMap<Object, Object[]>();
@@ -67,7 +66,7 @@ public class InstallableUnitContentProvider implements ITreeContentProvider {
         if (cachedExpiration.get(parentElement) == null
                 || cachedExpiration.get(parentElement).longValue() < System.currentTimeMillis()
                 || cachedChildren.get(parentElement) == null) {
-            Object[] elements = getChildrenInternal(parentElement);
+            Object[] elements = getChildren(parentElement);
             cachedChildren.put(parentElement, elements);
             cachedExpiration.put(parentElement, System.currentTimeMillis() + duration);
             return elements;
@@ -76,28 +75,43 @@ public class InstallableUnitContentProvider implements ITreeContentProvider {
     }
 
     @Override
+    public void updateElement(Object parentElement, int index) {
+        Object[] elements = getCachedChildren(parentElement, 20000);
+        if (elements != null && elements.length > index) {
+            Object element = elements[index];
+            treeViewer.replace(parentElement, index, element);
+
+            Object[] grandChildren = getCachedChildren(element, 20000);
+            if (grandChildren != null) {
+                treeViewer.setChildCount(element, grandChildren.length);
+            }
+        }
+    }
+
+    @Override
+    public void updateChildCount(Object element, int currentChildCount) {
+        Object[] elements = getChildren(element);
+        if (elements != null && elements.length != currentChildCount) {
+            treeViewer.setChildCount(element, elements.length);
+        }
+    }
+
+    @Override
     public Object getParent(Object element) {
         return null;
     }
 
     protected Object[] toViewNodes(IGroupedInstallableUnits metadata, Collection<IInstallableUnit> units) {
-        ArrayList<InstallableUnitNode> nodes = new ArrayList<>();
+        ArrayList<InstallableUnitNode> nodes = new ArrayList<InstallableUnitNode>();
         for (IInstallableUnit unit : units) {
-            InstallableUnitNode node = this.nodes.computeIfAbsent(unit, key -> new InstallableUnitNode(metadata, key));
+            InstallableUnitNode node = this.nodes.get(unit);
+            if (node == null) {
+                node = new InstallableUnitNode(metadata, unit);
+                this.nodes.put(unit, node);
+            }
             nodes.add(node);
         }
         return nodes.toArray();
-    }
-
-    @Override
-    public Object[] getElements(Object inputElement) {
-        return getChildren(inputElement);
-    }
-
-    @Override
-    public boolean hasChildren(Object element) {
-        Object[] ret = getChildren(element);
-        return ret != null && ret.length > 0;
     }
 
 }

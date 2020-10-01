@@ -30,8 +30,8 @@ import org.eclipse.swt.widgets.Text;
 
 public class RepositoryLocationDialog extends TrayDialog {
     private static final String RELEASE_URL = "http://download.eclipse.org/releases/%s";
-    private static final String[] RELEASED_VERSIONS = new String[] { "2018-09", "photon", "oxygen", "neon", "mars",
-            "luna" };
+    private static final String[] RELEASED_VERSIONS = new String[] { "2020-09", "2020-06", "2020-03", "2019-12",
+            "2019-09" };
     private static final String UPDATE_URL = "http://download.eclipse.org/eclipse/updates/4.%s";
 
     private URI location;
@@ -65,17 +65,20 @@ public class RepositoryLocationDialog extends TrayDialog {
             try {
                 location = new URI(combo.getText());
                 message.setText("");
+                message.setVisible(false);
                 getButton(IDialogConstants.OK_ID).setEnabled(true);
             } catch (URISyntaxException ex) {
                 message.setText(ex.getMessage());
-                getButton(IDialogConstants.OK_ID).setEnabled(true);
+                message.setVisible(true);
+                getButton(IDialogConstants.OK_ID).setEnabled(false);
             }
         });
         combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-        message = new Text(container, SWT.BORDER | SWT.READ_ONLY);
+        message = new Text(container, SWT.BORDER | SWT.READ_ONLY | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
         message.setEditable(false);
-        message.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+        message.setVisible(false);
+        message.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 
         return container;
     }
@@ -87,7 +90,7 @@ public class RepositoryLocationDialog extends TrayDialog {
             combo.add(String.format(RELEASE_URL, release));
         }
 
-        for (int version = 9; version >= 4; version--) {
+        for (int version = 17; version >= 13; version--) {
             combo.add(String.format(UPDATE_URL, String.valueOf(version)));
         }
     }
@@ -102,12 +105,12 @@ public class RepositoryLocationDialog extends TrayDialog {
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        newShell.setText("Repository location");
+        newShell.setText("Add repository");
     }
 
     @Override
     protected Point getInitialSize() {
-        return new Point(450, 300);
+        return new Point(450, 200);
     }
 
     public URI getLocation() {

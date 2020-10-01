@@ -17,8 +17,6 @@ import java.util.Collections;
 
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.io.IUSerializer;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -36,10 +34,6 @@ public class InstallableUnitView extends ViewPart {
     public static final String ID = "com.ifedorenko.p2browser.views.InstallableUnitView"; //$NON-NLS-1$
 
     private final FormToolkit toolkit = new FormToolkit(Display.getCurrent());
-
-    private IGroupedInstallableUnits metadata;
-
-    private IInstallableUnit installableUnit;
 
     private Text xmlText;
 
@@ -95,14 +89,14 @@ public class InstallableUnitView extends ViewPart {
      * Initialize the toolbar.
      */
     private void initializeToolBar() {
-        IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
+        // You could use: getViewSite().getActionBars().getToolBarManager();
     }
 
     /**
      * Initialize the menu.
      */
     private void initializeMenu() {
-        IMenuManager manager = getViewSite().getActionBars().getMenuManager();
+        // You could use: getViewSite().getActionBars().getMenuManager();
     }
 
     @Override
@@ -111,9 +105,6 @@ public class InstallableUnitView extends ViewPart {
     }
 
     public void setInstallableUnit(IGroupedInstallableUnits metadata, IInstallableUnit installableUnit) {
-        this.metadata = metadata;
-        this.installableUnit = installableUnit;
-
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
             new IUSerializer(os).write(Collections.singletonList(installableUnit));

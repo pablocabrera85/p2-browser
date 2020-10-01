@@ -179,7 +179,7 @@ public abstract class AbstractInstallableUnitHierarchyView extends ViewPart {
         Tree hierarchyTree = hierarchyTreeViewer.getTree();
         hierarchySection.setClient(hierarchyTree);
         hierarchyTreeViewer.setUseHashlookup(true);
-        hierarchyTreeViewer.setContentProvider(new InstallableUnitContentProvider(hierarchyTreeViewer) {
+        hierarchyTreeViewer.setContentProvider(new InstallableUnitLazyContentProvider(hierarchyTreeViewer) {
             @Override
             public Object[] getChildren(Object inputElement) {
                 if (inputElement instanceof IGroupedInstallableUnits) {

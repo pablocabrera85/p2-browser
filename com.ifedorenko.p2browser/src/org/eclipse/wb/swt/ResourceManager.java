@@ -56,6 +56,7 @@ public class ResourceManager extends SWTResourceManager {
      *            the {@link Class} relative to which to find the image descriptor.
      * @param path
      *            the path to the image file.
+     * 
      * @return the {@link ImageDescriptor} stored in the file at the specified path.
      */
     public static ImageDescriptor getImageDescriptor(Class<?> clazz, String path) {
@@ -67,6 +68,7 @@ public class ResourceManager extends SWTResourceManager {
      * 
      * @param path
      *            the path to the image file.
+     * 
      * @return the {@link ImageDescriptor} stored in the file at the specified path.
      */
     public static ImageDescriptor getImageDescriptor(String path) {
@@ -82,6 +84,7 @@ public class ResourceManager extends SWTResourceManager {
      * 
      * @param descriptor
      *            the {@link ImageDescriptor} for the {@link Image}.
+     * 
      * @return the {@link Image} based on the specified {@link ImageDescriptor}.
      */
     public static Image getImage(ImageDescriptor descriptor) {
@@ -109,6 +112,7 @@ public class ResourceManager extends SWTResourceManager {
      *            the base {@link Image} that should be decorated.
      * @param decorator
      *            the {@link Image} to decorate the base image.
+     * 
      * @return {@link Image} The resulting decorated image.
      */
     public static Image decorateImage(Image baseImage, Image decorator) {
@@ -124,6 +128,7 @@ public class ResourceManager extends SWTResourceManager {
      *            the {@link Image} to decorate the base image.
      * @param corner
      *            the corner to place decorator image.
+     * 
      * @return the resulting decorated {@link Image}.
      */
     public static Image decorateImage(final Image baseImage, final Image decorator, final int corner) {
@@ -149,15 +154,18 @@ public class ResourceManager extends SWTResourceManager {
             CompositeImageDescriptor compositImageDesc = new CompositeImageDescriptor() {
                 @Override
                 protected void drawCompositeImage(int width, int height) {
-                    drawImage(baseImage.getImageData(), 0, 0);
+                    CachedImageDataProvider baseImageDataProvider = createCachedImageDataProvider(baseImage);
+                    CachedImageDataProvider decoratorImageDataProvider = createCachedImageDataProvider(decorator);
+
+                    drawImage(baseImageDataProvider, 0, 0);
                     if (corner == TOP_LEFT) {
-                        drawImage(decorator.getImageData(), 0, 0);
+                        drawImage(decoratorImageDataProvider, 0, 0);
                     } else if (corner == TOP_RIGHT) {
-                        drawImage(decorator.getImageData(), bib.width - dib.width, 0);
+                        drawImage(decoratorImageDataProvider, bib.width - dib.width, 0);
                     } else if (corner == BOTTOM_LEFT) {
-                        drawImage(decorator.getImageData(), 0, bib.height - dib.height);
+                        drawImage(decoratorImageDataProvider, 0, bib.height - dib.height);
                     } else if (corner == BOTTOM_RIGHT) {
-                        drawImage(decorator.getImageData(), bib.width - dib.width, bib.height - dib.height);
+                        drawImage(decoratorImageDataProvider, bib.width - dib.width, bib.height - dib.height);
                     }
                 }
 
@@ -236,6 +244,7 @@ public class ResourceManager extends SWTResourceManager {
      *            the plugin {@link Object} containing the image
      * @param name
      *            the path to the image within the plugin
+     * 
      * @return the {@link Image} stored in the file at the specified path
      * 
      * @deprecated Use {@link #getPluginImage(String, String)} instead.
@@ -260,6 +269,7 @@ public class ResourceManager extends SWTResourceManager {
      *            the symbolic name of the {@link Bundle}.
      * @param path
      *            the path of the resource entry.
+     * 
      * @return the {@link Image} stored in the file at the specified path.
      */
     public static Image getPluginImage(String symbolicName, String path) {
@@ -308,6 +318,7 @@ public class ResourceManager extends SWTResourceManager {
      *            the plugin {@link Object} containing the image.
      * @param name
      *            the path to th eimage within the plugin.
+     * 
      * @return the {@link ImageDescriptor} stored in the file at the specified path.
      * 
      * @deprecated Use {@link #getPluginImageDescriptor(String, String)} instead.
@@ -334,6 +345,7 @@ public class ResourceManager extends SWTResourceManager {
      *            the symbolic name of the {@link Bundle}.
      * @param path
      *            the path of the resource entry.
+     * 
      * @return the {@link ImageDescriptor} based on a {@link Bundle} and resource entry path.
      */
     public static ImageDescriptor getPluginImageDescriptor(String symbolicName, String path) {
@@ -374,7 +386,9 @@ public class ResourceManager extends SWTResourceManager {
      *            the plugin {@link Object} containing the file path.
      * @param name
      *            the file path.
+     * 
      * @return the {@link URL} representing the file at the specified path.
+     * 
      * @throws Exception
      */
     private static URL getPluginImageURL(Object plugin, String name) throws Exception {
